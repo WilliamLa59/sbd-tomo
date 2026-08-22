@@ -1,0 +1,50 @@
+services:
+  webserver:
+    image: sbd-tomo:dev
+
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    ports:
+      - "3000:3000"
+
+    volumes:
+      - .:/app
+      - webserver_node_modules:/app/node_modules
+
+    env_file:
+      - .env
+
+    environment:
+      CI: "true"
+
+    command: >
+      sh -c "pnpm install --frozen-lockfile &&
+             pnpm dev --host 0.0.0.0"
+
+  prisma:
+    image: sbd-tomo:dev
+
+    profiles:
+      - tools
+
+    volumes:
+      - .:/app
+      - prisma_node_modules:/app/node_modules
+
+    env_file:
+      - .env
+
+    environment:
+      CI: "true"
+
+    command: >
+      sh -c "pnpm install --frozen-lockfile &&
+              pnpm prisma studio --port 5555 --browser none"
+    ports:
+      - "5555:5555"
+
+volumes:
+  webserver_node_modules:
+  prisma_node_modules:
