@@ -200,7 +200,7 @@ export type ProgramGroupByOutputType = {
   _max: ProgramMaxAggregateOutputType | null
 }
 
-export type GetProgramGroupByPayload<T extends ProgramGroupByArgs> = Prisma.PrismaPromise<
+type GetProgramGroupByPayload<T extends ProgramGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<ProgramGroupByOutputType, T['by']> &
       {
@@ -1789,11 +1789,6 @@ export type ProgramFindManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * Skip the first `n` Programs.
    */
   skip?: number
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
-   * Filter by unique combinations of Programs.
-   */
   distinct?: Prisma.ProgramScalarFieldEnum | Prisma.ProgramScalarFieldEnum[]
 }
 

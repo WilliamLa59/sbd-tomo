@@ -271,7 +271,7 @@ export type PerformedSetGroupByOutputType = {
   _max: PerformedSetMaxAggregateOutputType | null
 }
 
-export type GetPerformedSetGroupByPayload<T extends PerformedSetGroupByArgs> = Prisma.PrismaPromise<
+type GetPerformedSetGroupByPayload<T extends PerformedSetGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<PerformedSetGroupByOutputType, T['by']> &
       {
@@ -1840,11 +1840,6 @@ export type PerformedSetFindManyArgs<ExtArgs extends runtime.Types.Extensions.In
    * Skip the first `n` PerformedSets.
    */
   skip?: number
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
-   * Filter by unique combinations of PerformedSets.
-   */
   distinct?: Prisma.PerformedSetScalarFieldEnum | Prisma.PerformedSetScalarFieldEnum[]
 }
 

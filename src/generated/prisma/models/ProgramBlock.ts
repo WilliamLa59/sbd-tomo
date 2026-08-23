@@ -224,7 +224,7 @@ export type ProgramBlockGroupByOutputType = {
   _max: ProgramBlockMaxAggregateOutputType | null
 }
 
-export type GetProgramBlockGroupByPayload<T extends ProgramBlockGroupByArgs> = Prisma.PrismaPromise<
+type GetProgramBlockGroupByPayload<T extends ProgramBlockGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<ProgramBlockGroupByOutputType, T['by']> &
       {
@@ -1451,11 +1451,6 @@ export type ProgramBlockFindManyArgs<ExtArgs extends runtime.Types.Extensions.In
    * Skip the first `n` ProgramBlocks.
    */
   skip?: number
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
-   * Filter by unique combinations of ProgramBlocks.
-   */
   distinct?: Prisma.ProgramBlockScalarFieldEnum | Prisma.ProgramBlockScalarFieldEnum[]
 }
 

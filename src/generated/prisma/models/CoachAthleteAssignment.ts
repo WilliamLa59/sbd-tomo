@@ -186,7 +186,7 @@ export type CoachAthleteAssignmentGroupByOutputType = {
   _max: CoachAthleteAssignmentMaxAggregateOutputType | null
 }
 
-export type GetCoachAthleteAssignmentGroupByPayload<T extends CoachAthleteAssignmentGroupByArgs> = Prisma.PrismaPromise<
+type GetCoachAthleteAssignmentGroupByPayload<T extends CoachAthleteAssignmentGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<CoachAthleteAssignmentGroupByOutputType, T['by']> &
       {
@@ -1550,11 +1550,6 @@ export type CoachAthleteAssignmentFindManyArgs<ExtArgs extends runtime.Types.Ext
    * Skip the first `n` CoachAthleteAssignments.
    */
   skip?: number
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
-   * Filter by unique combinations of CoachAthleteAssignments.
-   */
   distinct?: Prisma.CoachAthleteAssignmentScalarFieldEnum | Prisma.CoachAthleteAssignmentScalarFieldEnum[]
 }
 

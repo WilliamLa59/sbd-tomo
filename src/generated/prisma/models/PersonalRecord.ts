@@ -231,7 +231,7 @@ export type PersonalRecordGroupByOutputType = {
   _max: PersonalRecordMaxAggregateOutputType | null
 }
 
-export type GetPersonalRecordGroupByPayload<T extends PersonalRecordGroupByArgs> = Prisma.PrismaPromise<
+type GetPersonalRecordGroupByPayload<T extends PersonalRecordGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<PersonalRecordGroupByOutputType, T['by']> &
       {
@@ -1647,11 +1647,6 @@ export type PersonalRecordFindManyArgs<ExtArgs extends runtime.Types.Extensions.
    * Skip the first `n` PersonalRecords.
    */
   skip?: number
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
-   * Filter by unique combinations of PersonalRecords.
-   */
   distinct?: Prisma.PersonalRecordScalarFieldEnum | Prisma.PersonalRecordScalarFieldEnum[]
 }
 

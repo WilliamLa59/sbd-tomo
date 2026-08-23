@@ -5,3 +5,4 @@ allowBuilds:
   workerd: true
   '@prisma/engines': true
   prisma: true
+  '@prisma/client': true

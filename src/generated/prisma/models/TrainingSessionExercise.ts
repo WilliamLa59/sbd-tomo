@@ -213,7 +213,7 @@ export type TrainingSessionExerciseGroupByOutputType = {
   _max: TrainingSessionExerciseMaxAggregateOutputType | null
 }
 
-export type GetTrainingSessionExerciseGroupByPayload<T extends TrainingSessionExerciseGroupByArgs> = Prisma.PrismaPromise<
+type GetTrainingSessionExerciseGroupByPayload<T extends TrainingSessionExerciseGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<TrainingSessionExerciseGroupByOutputType, T['by']> &
       {
@@ -1648,11 +1648,6 @@ export type TrainingSessionExerciseFindManyArgs<ExtArgs extends runtime.Types.Ex
    * Skip the first `n` TrainingSessionExercises.
    */
   skip?: number
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
-   * Filter by unique combinations of TrainingSessionExercises.
-   */
   distinct?: Prisma.TrainingSessionExerciseScalarFieldEnum | Prisma.TrainingSessionExerciseScalarFieldEnum[]
 }
 

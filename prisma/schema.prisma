@@ -1,10 +1,12 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider   = "prisma-client"
+  output     = "../src/generated/prisma"
+  engineType = "client"
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 enum Gender {
@@ -106,6 +108,7 @@ model Session {
 
 model Account {
   id         String @id
+  issuer     String
   accountId  String @map("account_id")
   providerId String @map("provider_id")
 
@@ -125,6 +128,7 @@ model Account {
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
+  @@unique([issuer, accountId])
   @@index([userId], map: "accounts_user_id_idx")
   @@map("accounts")
 }

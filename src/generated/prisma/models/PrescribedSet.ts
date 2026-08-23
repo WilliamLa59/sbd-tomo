@@ -257,7 +257,7 @@ export type PrescribedSetGroupByOutputType = {
   _max: PrescribedSetMaxAggregateOutputType | null
 }
 
-export type GetPrescribedSetGroupByPayload<T extends PrescribedSetGroupByArgs> = Prisma.PrismaPromise<
+type GetPrescribedSetGroupByPayload<T extends PrescribedSetGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<PrescribedSetGroupByOutputType, T['by']> &
       {
@@ -1582,11 +1582,6 @@ export type PrescribedSetFindManyArgs<ExtArgs extends runtime.Types.Extensions.I
    * Skip the first `n` PrescribedSets.
    */
   skip?: number
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-   * 
-   * Filter by unique combinations of PrescribedSets.
-   */
   distinct?: Prisma.PrescribedSetScalarFieldEnum | Prisma.PrescribedSetScalarFieldEnum[]
 }
 
