@@ -10,13 +10,31 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppRouteImport } from './routes/app'
+import { Route as DesignRouteImport } from './routes/design'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as SignUpRouteImport } from './routes/signUp'
+import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as AppAnalyticsRouteImport } from './routes/app.analytics'
+import { Route as AppHistoryRouteImport } from './routes/app.history'
+import { Route as AppProgrammingRouteImport } from './routes/app.programming'
+import { Route as AppSettingsRouteImport } from './routes/app.settings'
+import { Route as AppTrainingRouteImport } from './routes/app.training'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DesignRoute = DesignRouteImport.update({
+  id: '/design',
+  path: '/design',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -29,6 +47,36 @@ const SignUpRoute = SignUpRouteImport.update({
   path: '/signUp',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppIndexRoute = AppIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAnalyticsRoute = AppAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppHistoryRoute = AppHistoryRouteImport.update({
+  id: '/history',
+  path: '/history',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProgrammingRoute = AppProgrammingRouteImport.update({
+  id: '/programming',
+  path: '/programming',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSettingsRoute = AppSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTrainingRoute = AppTrainingRouteImport.update({
+  id: '/training',
+  path: '/training',
+  getParentRoute: () => AppRoute,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -37,33 +85,94 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
+  '/design': typeof DesignRoute
   '/login': typeof LoginRoute
   '/signUp': typeof SignUpRoute
+  '/app/analytics': typeof AppAnalyticsRoute
+  '/app/history': typeof AppHistoryRoute
+  '/app/programming': typeof AppProgrammingRoute
+  '/app/settings': typeof AppSettingsRoute
+  '/app/training': typeof AppTrainingRoute
+  '/app/': typeof AppIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/design': typeof DesignRoute
   '/login': typeof LoginRoute
   '/signUp': typeof SignUpRoute
+  '/app/analytics': typeof AppAnalyticsRoute
+  '/app/history': typeof AppHistoryRoute
+  '/app/programming': typeof AppProgrammingRoute
+  '/app/settings': typeof AppSettingsRoute
+  '/app/training': typeof AppTrainingRoute
+  '/app': typeof AppIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
+  '/design': typeof DesignRoute
   '/login': typeof LoginRoute
   '/signUp': typeof SignUpRoute
+  '/app/analytics': typeof AppAnalyticsRoute
+  '/app/history': typeof AppHistoryRoute
+  '/app/programming': typeof AppProgrammingRoute
+  '/app/settings': typeof AppSettingsRoute
+  '/app/training': typeof AppTrainingRoute
+  '/app/': typeof AppIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/signUp' | '/api/auth/$'
+  fullPaths:
+    | '/'
+    | '/app'
+    | '/design'
+    | '/login'
+    | '/signUp'
+    | '/app/analytics'
+    | '/app/history'
+    | '/app/programming'
+    | '/app/settings'
+    | '/app/training'
+    | '/app/'
+    | '/api/auth/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/signUp' | '/api/auth/$'
-  id: '__root__' | '/' | '/login' | '/signUp' | '/api/auth/$'
+  to:
+    | '/'
+    | '/design'
+    | '/login'
+    | '/signUp'
+    | '/app/analytics'
+    | '/app/history'
+    | '/app/programming'
+    | '/app/settings'
+    | '/app/training'
+    | '/app'
+    | '/api/auth/$'
+  id:
+    | '__root__'
+    | '/'
+    | '/app'
+    | '/design'
+    | '/login'
+    | '/signUp'
+    | '/app/analytics'
+    | '/app/history'
+    | '/app/programming'
+    | '/app/settings'
+    | '/app/training'
+    | '/app/'
+    | '/api/auth/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
+  DesignRoute: typeof DesignRoute
   LoginRoute: typeof LoginRoute
   SignUpRoute: typeof SignUpRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
@@ -76,6 +185,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/design': {
+      id: '/design'
+      path: '/design'
+      fullPath: '/design'
+      preLoaderRoute: typeof DesignRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -92,6 +215,48 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignUpRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/': {
+      id: '/app/'
+      path: '/'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/analytics': {
+      id: '/app/analytics'
+      path: '/analytics'
+      fullPath: '/app/analytics'
+      preLoaderRoute: typeof AppAnalyticsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/history': {
+      id: '/app/history'
+      path: '/history'
+      fullPath: '/app/history'
+      preLoaderRoute: typeof AppHistoryRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/programming': {
+      id: '/app/programming'
+      path: '/programming'
+      fullPath: '/app/programming'
+      preLoaderRoute: typeof AppProgrammingRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/settings': {
+      id: '/app/settings'
+      path: '/settings'
+      fullPath: '/app/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/training': {
+      id: '/app/training'
+      path: '/training'
+      fullPath: '/app/training'
+      preLoaderRoute: typeof AppTrainingRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -102,8 +267,30 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AppRouteChildren {
+  AppAnalyticsRoute: typeof AppAnalyticsRoute
+  AppHistoryRoute: typeof AppHistoryRoute
+  AppProgrammingRoute: typeof AppProgrammingRoute
+  AppSettingsRoute: typeof AppSettingsRoute
+  AppTrainingRoute: typeof AppTrainingRoute
+  AppIndexRoute: typeof AppIndexRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppAnalyticsRoute: AppAnalyticsRoute,
+  AppHistoryRoute: AppHistoryRoute,
+  AppProgrammingRoute: AppProgrammingRoute,
+  AppSettingsRoute: AppSettingsRoute,
+  AppTrainingRoute: AppTrainingRoute,
+  AppIndexRoute: AppIndexRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
+  DesignRoute: DesignRoute,
   LoginRoute: LoginRoute,
   SignUpRoute: SignUpRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,

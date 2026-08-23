@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { authClient } from '@/lib/auth-client'
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute('/design')({
   component: HomePage,
 })
 
