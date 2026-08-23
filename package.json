@@ -36,6 +36,8 @@
     "@tanstack/react-router-ssr-query": "latest",
     "@tanstack/react-start": "latest",
     "@tanstack/react-table": "latest",
+    "better-auth": "^1.7.1",
+    "dotenv": "^17.4.2",
     "prisma": "^7.4.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
