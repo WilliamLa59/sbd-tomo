@@ -183,11 +183,21 @@ body {
     @apply border-border outline-ring/50;
   }
 
-  html {:
+  html {
     @apply font-sans;
   }
 
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .app-section {
+    @apply mt-8;
+  }
+
+  .app-section-body {
+    @apply mt-3;
   }
 }

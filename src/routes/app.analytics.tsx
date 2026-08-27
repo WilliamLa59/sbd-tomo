@@ -27,30 +27,57 @@ const liftMetrics = [
 	{
 		lift: "Squat",
 		pr: "405",
-		e1rm: "447",
 		change: 2.7,
 		prDate: "May 21 2026",
 	},
 	{
 		lift: "Bench",
 		pr: "285",
-		e1rm: "315",
 		change: 1.9,
 		prDate: "May 27 2026",
 	},
 	{
 		lift: "Deadlift",
 		pr: "525",
-		e1rm: "545",
 		change: 3.4,
 		prDate: "May 24 2026",
 	},
 	{
 		lift: "Total",
 		pr: "1,215",
-		e1rm: "1,307",
 		change: 2.8,
 		prDate: "May 27 2026",
+	},
+] as const;
+
+const estimatedMetrics = [
+	{
+		lift: "Squat",
+		e1rm: "447",
+		actual: "405",
+		gap: "+42",
+		change: 2.7,
+	},
+	{
+		lift: "Bench",
+		e1rm: "315",
+		actual: "285",
+		gap: "+30",
+		change: 1.9,
+	},
+	{
+		lift: "Deadlift",
+		e1rm: "545",
+		actual: "525",
+		gap: "+20",
+		change: 3.4,
+	},
+	{
+		lift: "Total",
+		e1rm: "1,307",
+		actual: "1,215",
+		gap: "+92",
+		change: 2.8,
 	},
 ] as const;
 
@@ -336,24 +363,46 @@ function AnalyticsPage() {
 				</p>
 			</div>
 
-			<div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-				{liftMetrics.map((metric) => (
-					<LiftMetricCard key={metric.lift} {...metric} />
-				))}
-			</div>
+			<section className="app-section">
+				<SectionHeader label="Actuals" />
 
-			<div className="mt-4">
-				<TotalOutlookCard />
-			</div>
+				<div className="app-section-body grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+					{liftMetrics.map((metric) => (
+						<LiftMetricCard key={metric.lift} {...metric} />
+					))}
+				</div>
+			</section>
 
-			<div className="mt-4">
+			<section className="app-section">
 				<StrengthTrendCard />
-			</div>
+			</section>
 
-			<div className="mt-4">
+			<section className="app-section">
 				<PrMilestonesCard />
-			</div>
+			</section>
+
+			<section className="app-section">
+				<SectionHeader label="Estimates and Projections" />
+
+				<div className="app-section-body">
+					<TotalOutlookCard />
+				</div>
+
+				<div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+					{estimatedMetrics.map((metric) => (
+						<EstimatedMetricCard key={metric.lift} {...metric} />
+					))}
+				</div>
+			</section>
 		</PageContainer>
+	);
+}
+
+function SectionHeader({ label }: { label: string }) {
+	return (
+		<p className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
+			{label}
+		</p>
 	);
 }
 
@@ -423,18 +472,11 @@ function OutlookRow({
 type LiftMetricCardProps = {
 	lift: string;
 	pr: string;
-	e1rm: string;
 	change: number;
 	prDate: string;
 };
 
-function LiftMetricCard({
-	lift,
-	pr,
-	e1rm,
-	change,
-	prDate,
-}: LiftMetricCardProps) {
+function LiftMetricCard({ lift, pr, change, prDate }: LiftMetricCardProps) {
 	return (
 		<Card className="shadow-none">
 			<CardContent className="p-5">
@@ -466,16 +508,67 @@ function LiftMetricCard({
 					</div>
 
 					<div className="text-right">
-						<p className="text-muted-foreground">Estimated 1RM</p>
-						<p className="mt-1 font-mono text-sm font-medium">{e1rm} lb</p>
+						<p className="text-muted-foreground">Recent trend</p>
+						<p className="mt-1 inline-flex items-center justify-end gap-1 font-mono text-sm font-medium text-success">
+							<ArrowUpRight className="size-3.5" />
+							{change.toFixed(1)}%
+						</p>
 					</div>
 				</div>
+			</CardContent>
+		</Card>
+	);
+}
 
-				<div className="mt-3 flex justify-end text-xs">
-					<span className="inline-flex items-center gap-1 font-medium text-success">
-						<ArrowUpRight className="size-3.5" />
-						{change.toFixed(1)}%
+type EstimatedMetricCardProps = {
+	lift: string;
+	e1rm: string;
+	actual: string;
+	gap: string;
+	change: number;
+};
+
+function EstimatedMetricCard({
+	lift,
+	e1rm,
+	actual,
+	gap,
+	change,
+}: EstimatedMetricCardProps) {
+	return (
+		<Card className="shadow-none">
+			<CardContent className="p-5">
+				<p className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
+					{lift}
+				</p>
+
+				<div className="mt-4 flex items-end gap-2">
+					<span className="font-mono text-3xl font-medium tracking-[-0.05em] md:text-4xl">
+						{e1rm}
 					</span>
+					<span className="mb-1 font-mono text-xs text-muted-foreground">
+						LB EST.
+					</span>
+				</div>
+
+				<div className="mt-4 grid gap-2 border-t pt-4 text-xs">
+					<div className="flex items-center justify-between gap-3">
+						<span className="text-muted-foreground">Actual PR</span>
+						<span className="font-mono font-medium">{actual} lb</span>
+					</div>
+
+					<div className="flex items-center justify-between gap-3">
+						<span className="text-muted-foreground">Estimated gap</span>
+						<span className="font-mono font-medium">{gap} lb</span>
+					</div>
+
+					<div className="flex items-center justify-between gap-3">
+						<span className="text-muted-foreground">Trend</span>
+						<span className="inline-flex items-center gap-1 font-mono font-medium text-success">
+							<ArrowUpRight className="size-3.5" />
+							{change.toFixed(1)}%
+						</span>
+					</div>
 				</div>
 			</CardContent>
 		</Card>

@@ -180,10 +180,10 @@ function DashboardPage() {
 				</p>
 			</div>
 
-			<section className="mt-8">
+			<section className="app-section">
 				<SectionLabel>Today</SectionLabel>
 
-				<TrainingCuesCard className="mt-3" cues={trainingCues} />
+				<TrainingCuesCard className="app-section-body" cues={trainingCues} />
 
 				<div className="mt-4 grid items-stretch gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(360px,2fr)]">
 					<WorkoutHeroCard
@@ -251,11 +251,11 @@ function DashboardPage() {
 				</div>
 			</section>
 
-			<section className="mt-8">
+			<section className="app-section">
 				<SectionLabel>Up next</SectionLabel>
 
 				<NextWorkoutCard
-					className="mt-3"
+					className="app-section-body"
 					variant="compact"
 					title="Bench Press Focus"
 					block="Week 3"
@@ -287,11 +287,11 @@ function DashboardPage() {
 				/>
 			</section>
 
-			<section className="mt-8">
+			<section className="app-section">
 				<SectionLabel>Your current block</SectionLabel>
 
 				<ProgramBlockCalendarCard
-					className="mt-3"
+					className="app-section-body"
 					title={currentBlockName}
 					dateRange="May 19 - Jun 28"
 					startDate="2026-05-19"
