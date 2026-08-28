@@ -1,12 +1,10 @@
 // src/routes/app.index.tsx
 
 import { createFileRoute } from "@tanstack/react-router";
-import { Activity, TrendingUp } from "lucide-react";
 
-import { MetricCard } from "@/components/analytics/metric-card";
 import { PageContainer } from "@/components/layout/page-container";
+import { BlockProgressionCard } from "@/components/training/block-progression-card";
 import { NextWorkoutCard } from "@/components/training/next-workout-card";
-import { PlateLoadCard } from "@/components/training/plate-load-card";
 import { ProgramBlockCalendarCard } from "@/components/training/program-block-calendar-card";
 import { TrainingCuesCard } from "@/components/training/training-cues-card";
 import { WorkoutHeroCard } from "@/components/training/workout-hero-card";
@@ -185,7 +183,7 @@ function DashboardPage() {
 
 				<TrainingCuesCard className="app-section-body" cues={trainingCues} />
 
-				<div className="mt-4 grid items-stretch gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(360px,2fr)]">
+				<div className="mt-4 grid items-stretch gap-4 xl:grid-cols-[minmax(0,1.65fr)_minmax(320px,0.9fr)]">
 					<WorkoutHeroCard
 						exercise="Competition Squat"
 						topSet={{
@@ -197,91 +195,63 @@ function DashboardPage() {
 						backdowns={backdowns}
 					/>
 
-					<div className="grid min-w-0 gap-4 [grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr))] lg:grid-cols-2">
-						<PlateLoadCard weight={405} className="[grid-column:1/-1]" />
-
-						<MetricCard
-							label="Estimated 1RM"
-							value="447"
-							unit="LB"
-							change={2.7}
-							detail="from last week"
-							stats={[
+					<div className="min-w-0">
+						<NextWorkoutCard
+							variant="default"
+							title="Bench Press Focus"
+							block="Week 3"
+							day="Day 3"
+							exercises={[
 								{
-									label: "Bench",
-									value: "315 lb",
+									name: "Competition Bench",
+									weightUnit: "lb",
+									ratingUnit: "RPE",
+									topSet: {
+										weight: 275,
+										reps: 3,
+										rating: 7,
+									},
+									backdowns: {
+										weight: 255,
+										sets: 3,
+										reps: 5,
+										rating: 6,
+									},
 								},
 								{
-									label: "Deadlift",
-									value: "545 lb",
+									name: "Paused Bench",
 								},
 								{
-									label: "Total",
-									value: "1,307 lb",
-								},
-							]}
-							icon={<TrendingUp className="size-4" />}
-							className="min-w-0"
-						/>
-
-						<MetricCard
-							label="Training Volume"
-							value="12,840"
-							unit="LB"
-							change={8.2}
-							detail="from last week"
-							stats={[
-								{
-									label: "Working sets",
-									value: "14",
-								},
-								{
-									label: "Completed",
-									value: "62%",
-								},
-								{
-									label: "Remaining",
-									value: "7,860 lb",
+									name: "Accessories",
 								},
 							]}
-							icon={<Activity className="size-4" />}
-							className="min-w-0"
 						/>
 					</div>
 				</div>
-			</section>
 
-			<section className="app-section">
-				<SectionLabel>Up next</SectionLabel>
-
-				<NextWorkoutCard
-					className="app-section-body"
-					variant="compact"
-					title="Bench Press Focus"
-					block="Week 3"
-					day="Day 3"
-					exercises={[
+				<BlockProgressionCard
+					className="mt-4"
+					entries={[
 						{
-							name: "Competition Bench",
-							weightUnit: "lb",
-							ratingUnit: "RPE",
-							topSet: {
-								weight: 275,
-								reps: 3,
-								rating: 7,
-							},
-							backdowns: {
-								weight: 255,
-								sets: 3,
-								reps: 5,
-								rating: 6,
-							},
+							label: "Squat e1RM",
+							currentE1rm: 447,
+							changePercent: 3.2,
+							highlight: true,
 						},
 						{
-							name: "Paused Bench",
+							label: "Bench e1RM",
+							currentE1rm: 315,
+							changePercent: 1.6,
 						},
 						{
-							name: "Accessories",
+							label: "Deadlift e1RM",
+							currentE1rm: 545,
+							changePercent: 2.3,
+						},
+						{
+							label: "Estimated Total",
+							currentE1rm: 1307,
+							changePercent: 2.4,
 						},
 					]}
 				/>

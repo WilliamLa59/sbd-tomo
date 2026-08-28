@@ -21,6 +21,7 @@ import { Route as AppProgrammingRouteImport } from './routes/app.programming'
 import { Route as AppSettingsRouteImport } from './routes/app.settings'
 import { Route as AppTrainingRouteImport } from './routes/app.training'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as AppHistoryBlockIdRouteImport } from './routes/app.history.$blockId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -82,6 +83,11 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppHistoryBlockIdRoute = AppHistoryBlockIdRouteImport.update({
+  id: '/$blockId',
+  path: '/$blockId',
+  getParentRoute: () => AppHistoryRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -90,12 +96,13 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/signUp': typeof SignUpRoute
   '/app/analytics': typeof AppAnalyticsRoute
-  '/app/history': typeof AppHistoryRoute
+  '/app/history': typeof AppHistoryRouteWithChildren
   '/app/programming': typeof AppProgrammingRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/training': typeof AppTrainingRoute
   '/app/': typeof AppIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/app/history/$blockId': typeof AppHistoryBlockIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -103,12 +110,13 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/signUp': typeof SignUpRoute
   '/app/analytics': typeof AppAnalyticsRoute
-  '/app/history': typeof AppHistoryRoute
+  '/app/history': typeof AppHistoryRouteWithChildren
   '/app/programming': typeof AppProgrammingRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/training': typeof AppTrainingRoute
   '/app': typeof AppIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/app/history/$blockId': typeof AppHistoryBlockIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -118,12 +126,13 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/signUp': typeof SignUpRoute
   '/app/analytics': typeof AppAnalyticsRoute
-  '/app/history': typeof AppHistoryRoute
+  '/app/history': typeof AppHistoryRouteWithChildren
   '/app/programming': typeof AppProgrammingRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/training': typeof AppTrainingRoute
   '/app/': typeof AppIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/app/history/$blockId': typeof AppHistoryBlockIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -140,6 +149,7 @@ export interface FileRouteTypes {
     | '/app/training'
     | '/app/'
     | '/api/auth/$'
+    | '/app/history/$blockId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -153,6 +163,7 @@ export interface FileRouteTypes {
     | '/app/training'
     | '/app'
     | '/api/auth/$'
+    | '/app/history/$blockId'
   id:
     | '__root__'
     | '/'
@@ -167,6 +178,7 @@ export interface FileRouteTypes {
     | '/app/training'
     | '/app/'
     | '/api/auth/$'
+    | '/app/history/$blockId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -264,12 +276,31 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/history/$blockId': {
+      id: '/app/history/$blockId'
+      path: '/$blockId'
+      fullPath: '/app/history/$blockId'
+      preLoaderRoute: typeof AppHistoryBlockIdRouteImport
+      parentRoute: typeof AppHistoryRoute
+    }
   }
 }
 
+interface AppHistoryRouteChildren {
+  AppHistoryBlockIdRoute: typeof AppHistoryBlockIdRoute
+}
+
+const AppHistoryRouteChildren: AppHistoryRouteChildren = {
+  AppHistoryBlockIdRoute: AppHistoryBlockIdRoute,
+}
+
+const AppHistoryRouteWithChildren = AppHistoryRoute._addFileChildren(
+  AppHistoryRouteChildren,
+)
+
 interface AppRouteChildren {
   AppAnalyticsRoute: typeof AppAnalyticsRoute
-  AppHistoryRoute: typeof AppHistoryRoute
+  AppHistoryRoute: typeof AppHistoryRouteWithChildren
   AppProgrammingRoute: typeof AppProgrammingRoute
   AppSettingsRoute: typeof AppSettingsRoute
   AppTrainingRoute: typeof AppTrainingRoute
@@ -278,7 +309,7 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppAnalyticsRoute: AppAnalyticsRoute,
-  AppHistoryRoute: AppHistoryRoute,
+  AppHistoryRoute: AppHistoryRouteWithChildren,
   AppProgrammingRoute: AppProgrammingRoute,
   AppSettingsRoute: AppSettingsRoute,
   AppTrainingRoute: AppTrainingRoute,

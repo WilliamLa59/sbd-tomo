@@ -5,7 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
-export type TrainingDayStatus = "completed" | "upcoming";
+export type TrainingDayStatus =
+	| "completed"
+	| "upcoming"
+	| "skipped"
+	| "partial";
 
 export type TrainingDay = {
 	id: string;
@@ -17,6 +21,7 @@ export type TrainingDay = {
 	backdowns?: string;
 	planned?: string;
 	actual?: string;
+	rpe?: string;
 	note?: string;
 };
 
@@ -26,6 +31,8 @@ type TrainingDayCardProps = {
 
 export function TrainingDayCard({ day }: TrainingDayCardProps) {
 	const isCompleted = day.status === "completed";
+	const isSkipped = day.status === "skipped";
+	const isPartial = day.status === "partial";
 
 	return (
 		<Card className={cn("shadow-none", !isCompleted && "bg-muted/30")}>
@@ -35,7 +42,13 @@ export function TrainingDayCard({ day }: TrainingDayCardProps) {
 						<div className="flex flex-wrap items-center gap-2">
 							<p className="text-sm font-medium">{day.day}</p>
 							<Badge variant={isCompleted ? "secondary" : "outline"}>
-								{isCompleted ? "Completed" : "Upcoming"}
+								{isCompleted
+									? "Completed"
+									: isSkipped
+										? "Skipped"
+										: isPartial
+											? "Partial"
+											: "Upcoming"}
 							</Badge>
 						</div>
 
@@ -53,6 +66,7 @@ export function TrainingDayCard({ day }: TrainingDayCardProps) {
 							label="Backdowns"
 							value={day.backdowns ?? "Not logged"}
 						/>
+						<SessionStat label="RPE" value={day.rpe ?? "Not logged"} />
 
 						{day.planned && day.actual && (
 							<div className="border-t pt-3 sm:col-span-2">
@@ -63,7 +77,7 @@ export function TrainingDayCard({ day }: TrainingDayCardProps) {
 							</div>
 						)}
 
-						{isCompleted && day.note ? (
+						{(isCompleted || isSkipped || isPartial) && day.note ? (
 							<div className="min-w-0 border-t pt-3 sm:col-span-2">
 								<p className="text-muted-foreground">Note</p>
 								<p className="mt-1 truncate text-xs text-foreground/80">
