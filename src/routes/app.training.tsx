@@ -19,18 +19,25 @@ import {
 } from "@/components/training/training-day-card";
 import { WeekSummaryCard } from "@/components/training/week-summary-card";
 import { WeeklyVolumeCard } from "@/components/training/weekly-volume-card";
+import { Card, CardContent } from "@/components/ui/card";
 
 export const Route = createFileRoute("/app/training")({
 	component: TrainingPage,
 });
 
-const activeBlock = {
+type ActiveTrainingBlock = {
+	title: string;
+	currentWeek: number;
+	totalWeeks: number;
+	dateRange: string;
+};
+
+const activeBlock: ActiveTrainingBlock | null = {
 	title: "Block 13 - Volume / Strength",
 	currentWeek: 3,
 	totalWeeks: 6,
 	dateRange: "Aug 10 - Sep 18",
-	progressPercent: 50,
-} as const;
+};
 
 const blockMetrics = [
 	{
@@ -59,24 +66,39 @@ const blockMetrics = [
 	},
 	{
 		label: "Week Volume",
-		value: "31,420",
+		value: "28,800",
 		unit: "LB",
-		detail: "current week",
+		detail: "current week actual",
 		icon: Activity,
 	},
 	{
 		label: "Block Volume",
-		value: "82,750",
+		value: "81,200",
 		unit: "LB",
-		detail: "accumulated",
+		detail: "accumulated actual",
 		icon: Sigma,
 	},
 ] as const;
 
 const strengthProgression = [
-	{ week: "Week 1", squat: 438, bench: 302, deadlift: 471 },
-	{ week: "Week 2", squat: 448, bench: 307, deadlift: 478 },
-	{ week: "Week 3", squat: 462, bench: 315, deadlift: 487 },
+	{
+		week: "Week 1",
+		squat: { absolute: 438, percentChange: 0 },
+		bench: { absolute: 302, percentChange: 0 },
+		deadlift: { absolute: 471, percentChange: 0 },
+	},
+	{
+		week: "Week 2",
+		squat: { absolute: 448, percentChange: 2.3 },
+		bench: { absolute: 307, percentChange: 1.7 },
+		deadlift: { absolute: 478, percentChange: 1.5 },
+	},
+	{
+		week: "Week 3",
+		squat: { absolute: 462, percentChange: 5.5 },
+		bench: { absolute: 315, percentChange: 4.3 },
+		deadlift: { absolute: 487, percentChange: 3.4 },
+	},
 ] as const;
 
 const weeklyVolume = [
@@ -103,23 +125,23 @@ const weeklyVolume = [
 const blockTargets = [
 	{
 		lift: "Squat",
-		startE1rm: 438,
-		currentE1rm: 462,
-		targetE1rm: 475,
+		start: "425 lb × 4 [7](7)",
+		current: "445 lb × 3 [8](8)",
+		target: "455 lb × 2 [7](7)",
 		targetReps: 2,
 	},
 	{
 		lift: "Bench",
-		startE1rm: 302,
-		currentE1rm: 315,
-		targetE1rm: 325,
-		targetReps: 3,
+		start: "285 lb × 4 [7](7)",
+		current: "290 lb × 3 [7](7)",
+		target: "305 lb × 1 [7](7)",
+		targetReps: 1,
 	},
 	{
 		lift: "Deadlift",
-		startE1rm: 471,
-		currentE1rm: 487,
-		targetE1rm: 500,
+		start: "435 lb × 4 [7](7.5)",
+		current: "445 lb × 3 [7](7)",
+		target: "475 lb × 1 [7](7)",
 		targetReps: 1,
 	},
 ] as const;
@@ -143,9 +165,6 @@ const weekSummaries = {
 		squatVolume: "9,400",
 		benchVolume: "8,700",
 		deadliftVolume: "7,100",
-		averageRpe: "7.1",
-		e1rmChange: "+2.8%",
-		adherence: "96%",
 	},
 	2: {
 		week: 2,
@@ -156,21 +175,6 @@ const weekSummaries = {
 		squatVolume: "10,200",
 		benchVolume: "9,100",
 		deadliftVolume: "7,900",
-		averageRpe: "7.3",
-		e1rmChange: "+3.1%",
-		adherence: "95%",
-		deltas: {
-			totalVolume: { value: "+7.9%", direction: "positive", compareWeek: 1 },
-			squatVolume: { value: "+8.5%", direction: "positive", compareWeek: 1 },
-			benchVolume: { value: "+4.6%", direction: "positive", compareWeek: 1 },
-			deadliftVolume: {
-				value: "+11.3%",
-				direction: "positive",
-				compareWeek: 1,
-			},
-			averageRpe: { value: "+0.2", direction: "neutral", compareWeek: 1 },
-			e1rmChange: { value: "+0.3 pct", direction: "positive", compareWeek: 1 },
-		},
 	},
 	3: {
 		week: 3,
@@ -181,78 +185,36 @@ const weekSummaries = {
 		squatVolume: "10,600",
 		benchVolume: "9,800",
 		deadliftVolume: "8,400",
-		averageRpe: "7.4",
-		e1rmChange: "+3.6%",
-		adherence: "94%",
-		deltas: {
-			totalVolume: { value: "+5.9%", direction: "positive", compareWeek: 2 },
-			squatVolume: { value: "+3.9%", direction: "positive", compareWeek: 2 },
-			benchVolume: { value: "+7.7%", direction: "positive", compareWeek: 2 },
-			deadliftVolume: { value: "+6.3%", direction: "positive", compareWeek: 2 },
-			averageRpe: { value: "+0.1", direction: "neutral", compareWeek: 2 },
-			e1rmChange: { value: "+0.5 pct", direction: "positive", compareWeek: 2 },
-		},
 	},
 	4: {
 		week: 4,
 		status: "Upcoming",
 		completedSessions: 0,
 		totalSessions: 5,
-		totalVolume: "30,100",
-		squatVolume: "11,200",
-		benchVolume: "10,200",
-		deadliftVolume: "8,700",
-		averageRpe: "-",
-		e1rmChange: "Planned",
-		adherence: "Planned",
-		deltas: {
-			totalVolume: { value: "+4.5%", direction: "positive", compareWeek: 3 },
-			squatVolume: { value: "+5.7%", direction: "positive", compareWeek: 3 },
-			benchVolume: { value: "+4.1%", direction: "positive", compareWeek: 3 },
-			deadliftVolume: { value: "+3.6%", direction: "positive", compareWeek: 3 },
-		},
+		totalVolume: "0",
+		squatVolume: "0",
+		benchVolume: "0",
+		deadliftVolume: "0",
 	},
 	5: {
 		week: 5,
 		status: "Upcoming",
 		completedSessions: 0,
 		totalSessions: 5,
-		totalVolume: "31,400",
-		squatVolume: "11,700",
-		benchVolume: "10,600",
-		deadliftVolume: "9,100",
-		averageRpe: "-",
-		e1rmChange: "Planned",
-		adherence: "Planned",
-		deltas: {
-			totalVolume: { value: "+4.3%", direction: "positive", compareWeek: 4 },
-			squatVolume: { value: "+4.5%", direction: "positive", compareWeek: 4 },
-			benchVolume: { value: "+3.9%", direction: "positive", compareWeek: 4 },
-			deadliftVolume: { value: "+4.6%", direction: "positive", compareWeek: 4 },
-		},
+		totalVolume: "0",
+		squatVolume: "0",
+		benchVolume: "0",
+		deadliftVolume: "0",
 	},
 	6: {
 		week: 6,
 		status: "Upcoming",
 		completedSessions: 0,
 		totalSessions: 4,
-		totalVolume: "22,600",
-		squatVolume: "8,400",
-		benchVolume: "7,800",
-		deadliftVolume: "6,400",
-		averageRpe: "-",
-		e1rmChange: "Taper",
-		adherence: "Planned",
-		deltas: {
-			totalVolume: { value: "-28.0%", direction: "negative", compareWeek: 5 },
-			squatVolume: { value: "-28.2%", direction: "negative", compareWeek: 5 },
-			benchVolume: { value: "-26.4%", direction: "negative", compareWeek: 5 },
-			deadliftVolume: {
-				value: "-29.7%",
-				direction: "negative",
-				compareWeek: 5,
-			},
-		},
+		totalVolume: "0",
+		squatVolume: "0",
+		benchVolume: "0",
+		deadliftVolume: "0",
 	},
 } as const;
 
@@ -263,10 +225,18 @@ const trainingDaysByWeek: Record<number, readonly TrainingDay[]> = {
 			day: "Monday",
 			title: "Competition Squat",
 			primaryLift: "Squat",
-			topSet: "425 lb x 4 @ 7",
-			backdowns: "365 lb - 3 x 5 @ 6",
-			planned: "425 x 4 @ 7",
-			actual: "425 x 4 @ 7",
+			topSet: "425 lb × 4 [7](7)",
+			backdowns: [
+				"365 lb × 5 [6](6)",
+				"365 lb × 5 [6](6)",
+				"365 lb × 5 [6](6)",
+			],
+			plannedTopSet: "425 lb × 4 [7](7)",
+			plannedBackdowns: [
+				"365 lb × 5 [6](6)",
+				"365 lb × 5 [6](6)",
+				"365 lb × 5 [6](6)",
+			],
 			status: "completed",
 			note: "Moved well once I slowed the descent.",
 		},
@@ -275,21 +245,33 @@ const trainingDaysByWeek: Record<number, readonly TrainingDay[]> = {
 			day: "Tuesday",
 			title: "Competition Bench",
 			primaryLift: "Bench",
-			topSet: "285 lb x 4 @ 7",
-			backdowns: "245 lb - 4 x 5 @ 6",
-			planned: "285 x 4 @ 7",
-			actual: "285 x 4 @ 7",
+			topSet: "285 lb × 4 [7](7)",
+			backdowns: [
+				"245 lb × 5 [6](6)",
+				"245 lb × 5 [6](6)",
+				"245 lb × 5 [6](6)",
+				"245 lb × 5 [6](6)",
+			],
+			plannedTopSet: "285 lb × 4 [7](7)",
 			status: "completed",
 		},
 		{
 			id: "w1-d3",
 			day: "Wednesday",
-			title: "Deadlift Volume",
+			title: "Competition Deadlift",
 			primaryLift: "Deadlift",
-			topSet: "435 lb x 4 @ 7",
-			backdowns: "385 lb - 3 x 4 @ 6",
-			planned: "435 x 4 @ 7",
-			actual: "435 x 4 @ 7.5",
+			topSet: "435 lb × 4 [7](7.5)",
+			backdowns: [
+				"385 lb × 4 [6](6)",
+				"385 lb × 4 [6](6)",
+				"385 lb × 4 [6](6)",
+			],
+			plannedTopSet: "435 lb × 4 [7](7)",
+			plannedBackdowns: [
+				"385 lb × 4 [6](6)",
+				"385 lb × 4 [6](6)",
+				"385 lb × 4 [6](6)",
+			],
 			status: "completed",
 		},
 	],
@@ -297,24 +279,32 @@ const trainingDaysByWeek: Record<number, readonly TrainingDay[]> = {
 		{
 			id: "w2-d1",
 			day: "Monday",
-			title: "Squat + Bench Volume",
+			title: "Competition Squat",
 			primaryLift: "Squat",
-			topSet: "435 lb x 3 @ 7",
-			backdowns: "375 lb - 4 x 5 @ 6-7",
-			planned: "435 x 3 @ 7",
-			actual: "435 x 3 @ 7",
+			topSet: "435 lb × 3 [7](7)",
+			backdowns: [
+				"375 lb × 5 [6](6)",
+				"375 lb × 5 [6](6)",
+				"375 lb × 5 [7](7)",
+				"375 lb × 5 [7](7)",
+			],
+			plannedTopSet: "435 lb × 3 [7](7)",
 			status: "completed",
 			note: "Bar path stayed tighter than last week.",
 		},
 		{
 			id: "w2-d2",
 			day: "Tuesday",
-			title: "Bench Press Focus",
+			title: "Competition Bench",
 			primaryLift: "Bench",
-			topSet: "295 lb x 3 @ 7",
-			backdowns: "255 lb - 4 x 4 @ 6",
-			planned: "295 x 3 @ 7",
-			actual: "295 x 3 @ 7.5",
+			topSet: "295 lb × 3 [7](7.5)",
+			backdowns: [
+				"255 lb × 4 [6](6)",
+				"255 lb × 4 [6](6)",
+				"255 lb × 4 [6](6)",
+				"255 lb × 4 [6](6)",
+			],
+			plannedTopSet: "295 lb × 3 [7](7)",
 			status: "completed",
 		},
 		{
@@ -322,10 +312,13 @@ const trainingDaysByWeek: Record<number, readonly TrainingDay[]> = {
 			day: "Thursday",
 			title: "Competition Deadlift",
 			primaryLift: "Deadlift",
-			topSet: "445 lb x 3 @ 7",
-			backdowns: "395 lb - 3 x 4 @ 6",
-			planned: "445 x 3 @ 7",
-			actual: "445 x 3 @ 7",
+			topSet: "445 lb × 3 [7](7)",
+			backdowns: [
+				"395 lb × 4 [6](6)",
+				"395 lb × 4 [6](6)",
+				"395 lb × 4 [6](6)",
+			],
+			plannedTopSet: "445 lb × 3 [7](7)",
 			status: "completed",
 		},
 	],
@@ -335,10 +328,13 @@ const trainingDaysByWeek: Record<number, readonly TrainingDay[]> = {
 			day: "Monday",
 			title: "Competition Bench",
 			primaryLift: "Bench",
-			topSet: "290 lb x 3 @ 7",
-			backdowns: "255 lb - 3 x 4 @ 6-7",
-			planned: "290 x 3 @ 7",
-			actual: "290 x 3 @ 7",
+			topSet: "290 lb × 3 [7](7)",
+			backdowns: [
+				"255 lb × 4 [6](6)",
+				"255 lb × 4 [6](6)",
+				"255 lb × 4 [7](7)",
+			],
+			plannedTopSet: "290 lb × 3 [7](7)",
 			status: "completed",
 		},
 		{
@@ -346,41 +342,52 @@ const trainingDaysByWeek: Record<number, readonly TrainingDay[]> = {
 			day: "Tuesday",
 			title: "Competition Squat",
 			primaryLift: "Squat",
-			topSet: "445 lb x 3 @ 8",
-			backdowns: "375 x 4 / 365 x 5",
-			planned: "445 x 3 @ 7",
-			actual: "445 x 3 @ 8",
+			topSet: "445 lb × 3 [8](8)",
+			backdowns: ["375 lb × 4 [7](7)", "365 lb × 5 [7](7)"],
+			plannedTopSet: "445 lb × 3 [7](7)",
+			plannedBackdowns: ["375 lb × 4 [7](7)", "365 lb × 5 [7](7)"],
 			status: "completed",
 			note: "Brace was off initially. Wider stance + hips back fixed groove.",
 		},
 		{
 			id: "w3-d3",
 			day: "Wednesday",
-			title: "Light Bench / Upper",
-			primaryLift: "Bench",
-			topSet: "250 lb - 2 x 6 @ 7",
-			backdowns: "Rows + triceps",
-			planned: "250 x 6 @ 7",
-			actual: "250 x 6 @ 7",
+			title: "Competition Deadlift",
+			primaryLift: "Deadlift",
+			topSet: "455 lb × 3 [7](7)",
+			backdowns: [
+				"405 lb × 3 [6](6)",
+				"405 lb × 3 [6](6)",
+				"405 lb × 3 [6](6)",
+			],
+			plannedTopSet: "455 lb × 3 [7](7)",
 			status: "completed",
-			note: "Press felt crisp; kept elbows tucked consistently.",
+			note: "Locked in lats before the first pull and kept speed consistent.",
 		},
 		{
 			id: "w3-d4",
 			day: "Thursday",
-			title: "Competition Deadlift",
-			primaryLift: "Deadlift",
-			topSet: "455 lb x 3 @ 7",
-			backdowns: "405 lb - 3 x 3 @ 6",
+			title: "Competition Bench",
+			primaryLift: "Bench",
+			plannedTopSet: "300 lb × 2 [7](7)",
+			plannedBackdowns: [
+				"265 lb × 4 [6](6)",
+				"265 lb × 4 [6](6)",
+				"265 lb × 4 [6](6)",
+			],
 			status: "upcoming",
 		},
 		{
 			id: "w3-d5",
 			day: "Friday",
-			title: "Pause Squat + Heavy Bench",
-			primaryLift: "Squat / Bench",
-			topSet: "Pause squat 365 x 4",
-			backdowns: "Bench 275 lb - 4 x 3",
+			title: "Competition Squat",
+			primaryLift: "Squat",
+			plannedTopSet: "455 lb × 2 [7](7)",
+			plannedBackdowns: [
+				"395 lb × 4 [6](6)",
+				"395 lb × 4 [6](6)",
+				"395 lb × 4 [6](6)",
+			],
 			status: "upcoming",
 		},
 	],
@@ -390,8 +397,13 @@ const trainingDaysByWeek: Record<number, readonly TrainingDay[]> = {
 			day: "Monday",
 			title: "Competition Squat",
 			primaryLift: "Squat",
-			topSet: "455 lb x 2 @ 7",
-			backdowns: "395 lb - 4 x 4 @ 6",
+			plannedTopSet: "455 lb × 2 [7](7)",
+			plannedBackdowns: [
+				"395 lb × 4 [6](6)",
+				"395 lb × 4 [6](6)",
+				"395 lb × 4 [6](6)",
+				"395 lb × 4 [6](6)",
+			],
 			status: "upcoming",
 		},
 		{
@@ -399,8 +411,13 @@ const trainingDaysByWeek: Record<number, readonly TrainingDay[]> = {
 			day: "Tuesday",
 			title: "Competition Bench",
 			primaryLift: "Bench",
-			topSet: "300 lb x 2 @ 7",
-			backdowns: "265 lb - 4 x 4 @ 6",
+			plannedTopSet: "300 lb × 2 [7](7)",
+			plannedBackdowns: [
+				"265 lb × 4 [6](6)",
+				"265 lb × 4 [6](6)",
+				"265 lb × 4 [6](6)",
+				"265 lb × 4 [6](6)",
+			],
 			status: "upcoming",
 		},
 		{
@@ -408,8 +425,12 @@ const trainingDaysByWeek: Record<number, readonly TrainingDay[]> = {
 			day: "Thursday",
 			title: "Competition Deadlift",
 			primaryLift: "Deadlift",
-			topSet: "465 lb x 2 @ 7",
-			backdowns: "415 lb - 3 x 3 @ 6",
+			plannedTopSet: "465 lb × 2 [7](7)",
+			plannedBackdowns: [
+				"415 lb × 3 [6](6)",
+				"415 lb × 3 [6](6)",
+				"415 lb × 3 [6](6)",
+			],
 			status: "upcoming",
 		},
 	],
@@ -417,28 +438,36 @@ const trainingDaysByWeek: Record<number, readonly TrainingDay[]> = {
 		{
 			id: "w5-d1",
 			day: "Monday",
-			title: "Heavy Squat",
+			title: "Competition Squat",
 			primaryLift: "Squat",
-			topSet: "465 lb x 1 @ 7",
-			backdowns: "405 lb - 3 x 3 @ 6",
+			plannedTopSet: "465 lb × 1 [7](7)",
+			plannedBackdowns: [
+				"405 lb × 3 [6](6)",
+				"405 lb × 3 [6](6)",
+				"405 lb × 3 [6](6)",
+			],
 			status: "upcoming",
 		},
 		{
 			id: "w5-d2",
 			day: "Wednesday",
-			title: "Heavy Bench",
+			title: "Competition Bench",
 			primaryLift: "Bench",
-			topSet: "305 lb x 1 @ 7",
-			backdowns: "270 lb - 3 x 3 @ 6",
+			plannedTopSet: "305 lb × 1 [7](7)",
+			plannedBackdowns: [
+				"270 lb × 3 [6](6)",
+				"270 lb × 3 [6](6)",
+				"270 lb × 3 [6](6)",
+			],
 			status: "upcoming",
 		},
 		{
 			id: "w5-d3",
 			day: "Friday",
-			title: "Heavy Deadlift",
+			title: "Competition Deadlift",
 			primaryLift: "Deadlift",
-			topSet: "475 lb x 1 @ 7",
-			backdowns: "425 lb - 3 x 2 @ 6",
+			plannedTopSet: "475 lb × 1 [7](7)",
+			plannedBackdowns: ["425 lb × 2 [6](6)", "425 lb × 2 [6](6)"],
 			status: "upcoming",
 		},
 	],
@@ -446,34 +475,46 @@ const trainingDaysByWeek: Record<number, readonly TrainingDay[]> = {
 		{
 			id: "w6-d1",
 			day: "Monday",
-			title: "Squat Opener Practice",
+			title: "Competition Squat",
 			primaryLift: "Squat",
-			topSet: "435 lb x 1 @ 6",
-			backdowns: "Light technique work",
+			plannedTopSet: "435 lb × 1 [6](6)",
+			plannedBackdowns: [],
 			status: "upcoming",
 		},
 		{
 			id: "w6-d2",
 			day: "Wednesday",
-			title: "Bench Opener Practice",
+			title: "Competition Bench",
 			primaryLift: "Bench",
-			topSet: "285 lb x 1 @ 6",
-			backdowns: "Light technique work",
+			plannedTopSet: "285 lb × 1 [6](6)",
+			plannedBackdowns: [],
 			status: "upcoming",
 		},
 		{
 			id: "w6-d3",
 			day: "Friday",
-			title: "Test Day",
-			primaryLift: "SBD",
-			topSet: "Planned heavy singles",
-			backdowns: "None",
+			title: "Competition Deadlift",
+			primaryLift: "Deadlift",
+			plannedTopSet: "455 lb × 1 [6](6)",
+			plannedBackdowns: [],
 			status: "upcoming",
 		},
 	],
 };
 
 function TrainingPage() {
+	if (!activeBlock || activeBlock.currentWeek > activeBlock.totalWeeks) {
+		return <NoActiveBlockState />;
+	}
+
+	return <ActiveTrainingBlockPage activeBlock={activeBlock} />;
+}
+
+function ActiveTrainingBlockPage({
+	activeBlock,
+}: {
+	activeBlock: ActiveTrainingBlock;
+}) {
 	const [selectedWeek, setSelectedWeek] = useState<number>(
 		activeBlock.currentWeek,
 	);
@@ -502,7 +543,7 @@ function TrainingPage() {
 				<div className="grid gap-4 xl:grid-cols-[minmax(0,1.4fr)_minmax(360px,0.8fr)]">
 					<BlockStrengthProgressionCard data={strengthProgression} />
 					<WeeklyVolumeCard
-						accumulatedVolume="82,750"
+						accumulatedVolume="81,200"
 						currentWeek={activeBlock.currentWeek}
 						data={weeklyVolume}
 					/>
@@ -540,6 +581,24 @@ function TrainingPage() {
 					))}
 				</div>
 			</section>
+		</PageContainer>
+	);
+}
+
+function NoActiveBlockState() {
+	return (
+		<PageContainer className="pt-5 md:pt-7">
+			<Card className="shadow-none">
+				<CardContent className="p-8">
+					<h1 className="text-2xl font-medium tracking-tight">
+						No active block
+					</h1>
+					<p className="mt-2 text-sm text-muted-foreground">
+						Training metrics will appear once a current powerlifting block is
+						active.
+					</p>
+				</CardContent>
+			</Card>
 		</PageContainer>
 	);
 }

@@ -1,5 +1,4 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
 
 export type WeekMetricDelta = {
 	value: string;
@@ -24,11 +23,7 @@ type WeekSummaryCardProps = {
 	squatVolume: string;
 	benchVolume: string;
 	deadliftVolume: string;
-	averageRpe: string;
-	e1rmChange: string;
-	adherence: string;
 	status?: string;
-	deltas?: WeekSummaryDeltaMap;
 };
 
 export function WeekSummaryCard({
@@ -39,31 +34,18 @@ export function WeekSummaryCard({
 	squatVolume,
 	benchVolume,
 	deadliftVolume,
-	averageRpe,
-	e1rmChange,
-	adherence,
 	status,
-	deltas,
 }: WeekSummaryCardProps) {
 	const stats = [
 		{
 			label: "Total Volume",
 			value: `${totalVolume} lb`,
-			delta: deltas?.totalVolume,
 		},
-		{ label: "Squat", value: `${squatVolume} lb`, delta: deltas?.squatVolume },
-		{ label: "Bench", value: `${benchVolume} lb`, delta: deltas?.benchVolume },
+		{ label: "Squat Volume", value: `${squatVolume} lb` },
+		{ label: "Bench Volume", value: `${benchVolume} lb` },
 		{
-			label: "Deadlift",
+			label: "Deadlift Volume",
 			value: `${deadliftVolume} lb`,
-			delta: deltas?.deadliftVolume,
-		},
-		{ label: "Avg Session RPE", value: averageRpe, delta: deltas?.averageRpe },
-		{ label: "Program Adherence", value: adherence },
-		{
-			label: "Weekly e1RM Change",
-			value: e1rmChange,
-			delta: deltas?.e1rmChange,
 		},
 	];
 
@@ -91,35 +73,15 @@ export function WeekSummaryCard({
 					</p>
 				</div>
 
-				<div className="mt-5 grid gap-3 border-t pt-5 sm:grid-cols-2 lg:grid-cols-7">
+				<div className="mt-5 grid gap-3 border-t pt-5 sm:grid-cols-2 lg:grid-cols-4">
 					{stats.map((stat) => (
 						<div key={stat.label}>
 							<p className="text-xs text-muted-foreground">{stat.label}</p>
 							<p className="mt-1 font-mono text-sm font-medium">{stat.value}</p>
-							{stat.delta ? <MetricDelta delta={stat.delta} /> : null}
-							{!stat.delta &&
-							week === 1 &&
-							stat.label !== "Program Adherence" ? (
-								<p className="mt-1 text-xs text-muted-foreground">Baseline</p>
-							) : null}
 						</div>
 					))}
 				</div>
 			</CardContent>
 		</Card>
-	);
-}
-
-function MetricDelta({ delta }: { delta: WeekMetricDelta }) {
-	return (
-		<p
-			className={cn(
-				"mt-1 text-xs text-muted-foreground",
-				delta.direction === "positive" && "text-success",
-				delta.direction === "negative" && "text-destructive",
-			)}
-		>
-			{delta.value} vs W{delta.compareWeek}
-		</p>
 	);
 }

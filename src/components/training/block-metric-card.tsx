@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 
 type BlockMetricCardProps = {
 	label: string;
-	value: string;
+	value: string | null;
 	unit?: string;
 	change?: number;
 	detail?: string;
@@ -30,10 +30,10 @@ export function BlockMetricCard({
 
 						<div className="mt-4 flex items-end gap-2">
 							<span className="font-mono text-2xl font-medium tracking-[-0.05em] md:text-3xl">
-								{value}
+								{value ?? "-"}
 							</span>
 
-							{unit && (
+							{value && unit && (
 								<span className="mb-1 font-mono text-xs text-muted-foreground">
 									{unit}
 								</span>

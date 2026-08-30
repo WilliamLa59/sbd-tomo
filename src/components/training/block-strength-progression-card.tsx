@@ -17,9 +17,23 @@ type StrengthProgressionView = "absolute" | "percent";
 
 type StrengthProgressionPoint = {
 	week: string;
-	squat: number;
-	bench: number;
-	deadlift: number;
+	squat: LiftStrengthValue;
+	bench: LiftStrengthValue;
+	deadlift: LiftStrengthValue;
+};
+
+type LiftStrengthValue =
+	| number
+	| {
+			absolute: number | null;
+			percentChange: number | null;
+	  };
+
+type ChartStrengthProgressionPoint = {
+	week: string;
+	squat: number | null;
+	bench: number | null;
+	deadlift: number | null;
 };
 
 type BlockStrengthProgressionCardProps = {
@@ -30,10 +44,7 @@ export function BlockStrengthProgressionCard({
 	data,
 }: BlockStrengthProgressionCardProps) {
 	const [view, setView] = useState<StrengthProgressionView>("absolute");
-	const chartData =
-		view === "absolute"
-			? data
-			: data.map((point) => normalizePoint(point, data[0]));
+	const chartData = data.map((point) => toChartPoint(point, view, data[0]));
 
 	return (
 		<Card className="shadow-none">
@@ -151,20 +162,39 @@ function ViewSelector({
 	);
 }
 
-function normalizePoint(
+function toChartPoint(
 	point: StrengthProgressionPoint,
+	view: StrengthProgressionView,
 	start?: StrengthProgressionPoint,
-) {
+): ChartStrengthProgressionPoint {
 	return {
 		week: point.week,
-		squat: getPercentChange(point.squat, start?.squat),
-		bench: getPercentChange(point.bench, start?.bench),
-		deadlift: getPercentChange(point.deadlift, start?.deadlift),
+		squat: getLiftValue(point.squat, view, start?.squat),
+		bench: getLiftValue(point.bench, view, start?.bench),
+		deadlift: getLiftValue(point.deadlift, view, start?.deadlift),
 	};
 }
 
-function getPercentChange(value: number, start = value) {
-	return Number((((value - start) / start) * 100).toFixed(1));
+function getLiftValue(
+	value: LiftStrengthValue,
+	view: StrengthProgressionView,
+	start?: LiftStrengthValue,
+) {
+	if (typeof value !== "number") {
+		return view === "absolute" ? value.absolute : value.percentChange;
+	}
+
+	if (view === "absolute") {
+		return value;
+	}
+
+	const startValue = typeof start === "number" ? start : start?.absolute;
+
+	if (!startValue) {
+		return null;
+	}
+
+	return Number((((value - startValue) / startValue) * 100).toFixed(1));
 }
 
 export function ChartLegend() {

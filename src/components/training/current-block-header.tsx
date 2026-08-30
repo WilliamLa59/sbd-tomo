@@ -8,7 +8,6 @@ type CurrentBlockHeaderProps = {
 	currentWeek: number;
 	totalWeeks: number;
 	dateRange: string;
-	progressPercent: number;
 };
 
 export function CurrentBlockHeader({
@@ -16,8 +15,12 @@ export function CurrentBlockHeader({
 	currentWeek,
 	totalWeeks,
 	dateRange,
-	progressPercent,
 }: CurrentBlockHeaderProps) {
+	const progressPercent = Math.min(
+		100,
+		Math.max(0, (currentWeek / totalWeeks) * 100),
+	);
+
 	return (
 		<Card className="shadow-none">
 			<CardContent className="p-5 sm:p-6">

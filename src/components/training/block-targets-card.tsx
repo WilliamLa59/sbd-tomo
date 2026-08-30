@@ -1,9 +1,9 @@
 export type BlockLiftTarget = {
 	lift: "Squat" | "Bench" | "Deadlift";
-	startE1rm: number;
-	currentE1rm: number;
-	targetE1rm: number;
-	targetReps: 1 | 2 | 3;
+	start: string | null;
+	current: string | null;
+	target: string;
+	targetReps: 1 | 2 | 3 | 4 | 5;
 };
 
 type BlockTargetsCardProps = {
@@ -21,8 +21,6 @@ export function BlockTargetsCard({ targets }: BlockTargetsCardProps) {
 }
 
 function LiftTargetCard({ target }: { target: BlockLiftTarget }) {
-	const progress = getTargetProgress(target);
-
 	return (
 		<div className="border p-4">
 			<div className="flex items-start justify-between gap-3">
@@ -32,30 +30,32 @@ function LiftTargetCard({ target }: { target: BlockLiftTarget }) {
 						Target {formatRepIntent(target.targetReps)}
 					</p>
 				</div>
-				<span className="font-mono text-xs text-muted-foreground">
-					{Math.round(progress)}%
-				</span>
 			</div>
 
-			<div className="mt-4 grid grid-cols-3 gap-3 text-xs">
-				<TargetStat label="Start" value={target.startE1rm} />
-				<TargetStat label="Current" value={target.currentE1rm} />
-				<TargetStat label="Target" value={target.targetE1rm} />
-			</div>
-
-			<div className="mt-4 h-1.5 overflow-hidden bg-muted">
-				<div className="h-full bg-brand" style={{ width: `${progress}%` }} />
+			<div className="mt-4 grid gap-2 text-xs">
+				<TargetStat label="Start" value={target.start} />
+				<TargetStat label="Current" value={target.current} />
+				<TargetStat label="Target" value={target.target} />
 			</div>
 		</div>
 	);
 }
 
-function TargetStat({ label, value }: { label: string; value: number }) {
+function TargetStat({ label, value }: { label: string; value: string | null }) {
+	const display = value ? formatSet(value) : null;
+
 	return (
-		<div className="min-w-0">
+		<div className="grid min-w-0 gap-1 sm:grid-cols-[64px_minmax(0,1fr)] sm:items-baseline">
 			<p className="text-muted-foreground">{label}</p>
-			<p className="mt-1 truncate font-mono text-sm font-medium">
-				{value.toLocaleString()} lb
+			<p className="font-mono text-sm font-medium">
+				{display ? (
+					<>
+						<span className="hidden sm:inline">{display.full}</span>
+						<span className="sm:hidden">{display.compact}</span>
+					</>
+				) : (
+					"-"
+				)}
 			</p>
 		</div>
 	);
@@ -69,17 +69,34 @@ function formatRepIntent(reps: BlockLiftTarget["targetReps"]) {
 			return "double";
 		case 3:
 			return "triple";
+		default:
+			return `${reps} reps`;
 	}
 }
 
-function getTargetProgress(target: BlockLiftTarget) {
-	const gainTarget = target.targetE1rm - target.startE1rm;
+function formatSet(set: string) {
+	const match = set.match(
+		/^(\d+(?:\.\d+)?)\s+([a-zA-Z]+)\s*[×x]\s*(\d+)(?:\s*(?:\[(.*?)\]\(.*?\)|@\s*([0-9.]+)))?$/,
+	);
 
-	if (gainTarget <= 0) {
-		return 100;
+	if (!match) {
+		return { compact: set, full: set };
 	}
 
-	const gainSoFar = target.currentE1rm - target.startE1rm;
+	const [, weight, unit, reps, bracketRpe, atRpe] = match;
+	const rpe = bracketRpe ?? atRpe;
+	const baseFull = `${weight} ${unit} × ${reps}`;
+	const baseCompact = `${weight} ${unit}×${reps}`;
 
-	return Math.min(100, Math.max(0, (gainSoFar / gainTarget) * 100));
+	if (!rpe) {
+		return {
+			compact: baseCompact,
+			full: baseFull,
+		};
+	}
+
+	return {
+		compact: `${baseCompact} @ ${rpe}`,
+		full: `${baseFull} @ ${rpe}`,
+	};
 }
