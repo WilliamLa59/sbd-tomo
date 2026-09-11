@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, Dumbbell } from "lucide-react";
+import { ArrowLeft, Dumbbell, Sigma, TrendingUp } from "lucide-react";
 import { useState } from "react";
 
 import { PageContainer } from "@/components/layout/page-container";
+import { BlockMetricCard } from "@/components/training/block-metric-card";
 import { BlockStrengthProgressionCard } from "@/components/training/block-strength-progression-card";
 import {
 	type BlockWeekOption,
@@ -11,15 +12,9 @@ import {
 import { TrainingDayCard } from "@/components/training/training-day-card";
 import { WeekSummaryCard } from "@/components/training/week-summary-card";
 import { WeeklyVolumeCard } from "@/components/training/weekly-volume-card";
-import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-	type BlockPr,
-	getHistoricalBlock,
-	type HistoricalBlock,
-	type Lift,
-} from "@/data/history";
+import { getHistoricalBlock, type HistoricalBlock } from "@/data/history";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/app/history/$blockId")({
@@ -60,13 +55,8 @@ function HistoricalBlockPage() {
 
 	const weekSummary = block.weekSummaries[selectedWeek];
 	const trainingDays = block.trainingDaysByWeek[selectedWeek] ?? [];
-	const highlights = getBlockHighlights(block);
 	const statusCounts = getSessionStatusCounts(block);
 	const blockNotes = block.endingNotes ?? block.notes;
-	const combinedE1rmChange = block.liftAnalysis.reduce(
-		(total, lift) => total + lift.endE1rm - lift.startE1rm,
-		0,
-	);
 	const weeks: BlockWeekOption[] = Array.from(
 		{ length: block.weeks },
 		(_, index) => ({
@@ -93,7 +83,6 @@ function HistoricalBlockPage() {
 						<h1 className="text-2xl font-medium tracking-tight md:text-3xl">
 							{block.title}
 						</h1>
-						<Badge variant="secondary">{block.status}</Badge>
 					</div>
 					<p className="mt-2 text-sm text-muted-foreground">
 						{block.dateRange} · {block.weeks} weeks
@@ -118,7 +107,7 @@ function HistoricalBlockPage() {
 				<section className="app-section">
 					<Card className="shadow-none">
 						<CardContent className="p-5 sm:p-6">
-							<SectionLabel>Block Ending Notes</SectionLabel>
+							<SectionLabel>Block Review</SectionLabel>
 							<p className="mt-3 text-sm leading-6 text-foreground/80">
 								{blockNotes}
 							</p>
@@ -128,158 +117,38 @@ function HistoricalBlockPage() {
 			) : null}
 
 			<section className="app-section">
-				<Card className="shadow-none">
-					<CardContent className="p-5 sm:p-6">
-						<SectionLabel>Final Block Outcome</SectionLabel>
-						<div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-7">
-							{block.liftAnalysis.map((lift) => (
-								<ResultStat
-									key={lift.key}
-									label={lift.lift}
-									value={`${formatSigned(lift.endE1rm - lift.startE1rm)} lb e1RM`}
-								/>
-							))}
-							<ResultStat
-								label="Combined"
-								value={`${formatSigned(combinedE1rmChange)} lb`}
-							/>
-							<ResultStat
-								label="Sessions"
-								value={`${block.completedSessions} / ${block.totalSessions}`}
-							/>
-							<ResultStat label="Adherence" value={`${block.adherence}%`} />
-							<ResultStat
-								label="Total volume"
-								value={`${formatNumber(block.totalVolume)} lb`}
-							/>
-						</div>
-						<div className="mt-5 grid gap-3 border-t pt-4 text-xs sm:grid-cols-3">
-							<ResultStat
-								label="Completed"
-								value={String(statusCounts.completed)}
-							/>
-							<ResultStat
-								label="Skipped"
-								value={String(statusCounts.skipped)}
-							/>
-							<ResultStat
-								label="Partial"
-								value={String(statusCounts.partial)}
-							/>
-						</div>
-					</CardContent>
-				</Card>
-			</section>
+				<SectionLabel>Final Block Outcome</SectionLabel>
+				<div className="app-section-body grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+					{block.liftAnalysis.map((lift) => {
+						const e1rmChange = lift.endE1rm - lift.startE1rm;
 
-			{block.strengthAtEnd ? (
-				<section className="app-section">
-					<Card className="shadow-none">
-						<CardContent className="p-5 sm:p-6">
-							<div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-								<div>
-									<SectionLabel>Strength at Block End</SectionLabel>
-									<p className="mt-2 text-xs text-muted-foreground">
-										Actual logged strength and estimated strength are shown
-										separately.
-									</p>
-								</div>
-								<div className="grid grid-cols-2 gap-4 text-xs sm:text-right">
-									<ResultStat
-										label="Actual SBD Total"
-										value={`${formatNumber(getActualTotal(block))} lb`}
-									/>
-									<ResultStat
-										label="e1RM Total"
-										value={`${formatNumber(getE1rmTotal(block))} lb`}
-									/>
-								</div>
-							</div>
-
-							<div className="mt-5 overflow-x-auto">
-								<table className="w-full min-w-[520px] text-sm">
-									<thead className="text-muted-foreground">
-										<tr className="border-b">
-											<th className="pb-2 text-left font-medium">Measure</th>
-											{liftOrder.map((lift) => (
-												<th className="pb-2 text-right font-medium" key={lift}>
-													{liftLabels[lift]}
-												</th>
-											))}
-										</tr>
-									</thead>
-									<tbody>
-										<StrengthRow
-											getValue={(lift) =>
-												block.strengthAtEnd?.[lift]?.actualOneRm
-											}
-											label="Actual 1RM"
-										/>
-										<StrengthRow
-											getValue={(lift) =>
-												block.strengthAtEnd?.[lift]?.bestThreeRm
-											}
-											label="Best 3RM"
-										/>
-										<StrengthRow
-											getValue={(lift) =>
-												block.strengthAtEnd?.[lift]?.bestFiveRm
-											}
-											label="Best 5RM"
-										/>
-										<StrengthRow
-											getValue={(lift) => block.strengthAtEnd?.[lift]?.endE1rm}
-											label="End e1RM"
-										/>
-									</tbody>
-								</table>
-							</div>
-
-							{hasThreeRmComparison(block) ? (
-								<div className="mt-5 grid gap-3 border-t pt-4 text-xs sm:grid-cols-3">
-									{liftOrder.map((lift) => (
-										<ResultStat
-											key={lift}
-											label={`${liftLabels[lift]} 3RM`}
-											value={`${block.startingRepPrs?.[lift]?.three} x 3 -> ${block.endingRepPrs?.[lift]?.three} x 3`}
-										/>
-									))}
-								</div>
-							) : null}
-						</CardContent>
-					</Card>
-				</section>
-			) : null}
-
-			<section className="app-section">
-				<SectionLabel>Block PRs</SectionLabel>
-				{block.prs && block.prs.length > 0 ? (
-					<div className="app-section-body grid gap-3 md:grid-cols-3">
-						{block.prs.map((pr) => (
-							<Card className="shadow-none" key={getPrKey(pr)}>
-								<CardContent className="p-4">
-									<p className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
-										{liftLabels[pr.lift]}
-									</p>
-									<p className="mt-3 font-mono text-lg font-medium">
-										{formatPrSet(pr)}
-									</p>
-									<div className="mt-3 flex items-center justify-between gap-3 text-xs">
-										<span className="font-medium">{pr.reps}RM PR</span>
-										<span className="text-muted-foreground">
-											Week {pr.week}
-										</span>
-									</div>
-								</CardContent>
-							</Card>
-						))}
-					</div>
-				) : (
-					<Card className="app-section-body shadow-none">
-						<CardContent className="p-5 text-sm text-muted-foreground">
-							No new PRs this block.
-						</CardContent>
-					</Card>
-				)}
+						return (
+							<BlockMetricCard
+								change={getPercentChange(lift.endE1rm, lift.startE1rm)}
+								detail="from block start"
+								icon={TrendingUp}
+								key={lift.key}
+								label={`${lift.lift} net e1RM`}
+								unit="LB"
+								value={formatSigned(e1rmChange)}
+							/>
+						);
+					})}
+					<BlockMetricCard
+						detail="performed work"
+						icon={Sigma}
+						label="Total Volume"
+						unit="LB"
+						value={formatNumber(block.totalVolume)}
+					/>
+					<BlockMetricCard
+						detail="completed / partial / skipped"
+						icon={Dumbbell}
+						label="Session Counts"
+						valueClassName="text-xl md:text-2xl"
+						value={`${statusCounts.completed} / ${statusCounts.partial} / ${statusCounts.skipped}`}
+					/>
+				</div>
 			</section>
 
 			<section className="app-section">
@@ -299,7 +168,7 @@ function HistoricalBlockPage() {
 									/>
 									<AnalysisStat
 										label="Peak e1RM"
-										value={`${lift.peakE1rm} lb`}
+										value={`${lift.peakE1rm} lb · ${lift.peakWeek}`}
 									/>
 									<AnalysisStat label="End e1RM" value={`${lift.endE1rm} lb`} />
 									<AnalysisStat
@@ -313,73 +182,19 @@ function HistoricalBlockPage() {
 												: "text-destructive"
 										}
 									/>
-									<AnalysisStat label="Peak week" value={lift.peakWeek} />
 									<AnalysisStat
-										label="Best logged set"
+										label="Peak e1RM Set"
 										value={lift.bestPerformance}
 									/>
 									<AnalysisStat
 										label="Total work sets"
 										value={String(lift.totalWorkSets)}
 									/>
-									<AnalysisStat
-										label="Avg top-set RPE"
-										value={lift.averageTopSetRpe.toFixed(1)}
-									/>
-									<AnalysisStat
-										label="Avg RPE variance"
-										value={formatSignedDecimal(lift.averageRpeVariance)}
-										valueClassName={
-											lift.averageRpeVariance > 0
-												? "text-warning"
-												: lift.averageRpeVariance < 0
-													? "text-success"
-													: undefined
-										}
-									/>
 								</div>
 							</CardContent>
 						</Card>
 					))}
 				</div>
-			</section>
-
-			<section className="app-section">
-				<SectionLabel>Block Highlights</SectionLabel>
-				<Card className="app-section-body shadow-none">
-					<CardContent className="p-4">
-						<div className="flex flex-wrap gap-x-4 gap-y-2 text-xs">
-							<HighlightStat
-								label="Peak strength week"
-								value={highlights.peakStrengthWeek}
-							/>
-							<HighlightStat
-								label="Highest volume"
-								value={`${highlights.highestVolumeWeek} - ${formatNumber(
-									highlights.highestVolume,
-								)} lb`}
-							/>
-							<HighlightStat
-								label="Lowest avg RPE"
-								value={`${highlights.lowestRpeWeek} - ${highlights.lowestRpe}`}
-							/>
-							<HighlightStat
-								label="Highest avg RPE"
-								value={`${highlights.highestRpeWeek} - ${highlights.highestRpe}`}
-							/>
-							<HighlightStat
-								label="Sessions"
-								value={`${block.completedSessions} / ${block.totalSessions}`}
-							/>
-							{highlights.mostImprovedLift ? (
-								<HighlightStat
-									label="Most improved lift"
-									value={highlights.mostImprovedLift}
-								/>
-							) : null}
-						</div>
-					</CardContent>
-				</Card>
 			</section>
 
 			{block.programAdjustments && block.programAdjustments.length > 0 ? (
@@ -475,42 +290,6 @@ function AnalysisStat({
 	);
 }
 
-function HighlightStat({ label, value }: { label: string; value: string }) {
-	return (
-		<p className="font-mono">
-			<span className="font-sans text-muted-foreground">{label}:</span> {value}
-		</p>
-	);
-}
-
-function ResultStat({ label, value }: { label: string; value: string }) {
-	return (
-		<div>
-			<p className="text-xs text-muted-foreground">{label}</p>
-			<p className="mt-1 font-mono text-sm font-medium">{value}</p>
-		</div>
-	);
-}
-
-function StrengthRow({
-	label,
-	getValue,
-}: {
-	label: string;
-	getValue: (lift: Lift) => number | undefined;
-}) {
-	return (
-		<tr className="border-b last:border-b-0">
-			<td className="py-3 text-muted-foreground">{label}</td>
-			{liftOrder.map((lift) => (
-				<td className="py-3 text-right font-mono font-medium" key={lift}>
-					{formatStrengthValue(getValue(lift))}
-				</td>
-			))}
-		</tr>
-	);
-}
-
 function SectionLabel({ children }: { children: string }) {
 	return (
 		<p className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
@@ -518,14 +297,6 @@ function SectionLabel({ children }: { children: string }) {
 		</p>
 	);
 }
-
-const liftOrder: readonly Lift[] = ["squat", "bench", "deadlift"];
-
-const liftLabels: Record<Lift, string> = {
-	squat: "Squat",
-	bench: "Bench",
-	deadlift: "Deadlift",
-};
 
 function getPercentChange(end: number, start: number) {
 	return Number((((end - start) / start) * 100).toFixed(1));
@@ -541,47 +312,6 @@ function formatNumber(value: number) {
 
 function formatSigned(value: number) {
 	return value > 0 ? `+${value}` : String(value);
-}
-
-function formatSignedDecimal(value: number) {
-	return value > 0 ? `+${value.toFixed(1)}` : value.toFixed(1);
-}
-
-function formatStrengthValue(value: number | undefined) {
-	return typeof value === "number" ? `${formatNumber(value)} lb` : "Not logged";
-}
-
-function formatPrSet(pr: BlockPr) {
-	return `${formatNumber(pr.weight)} x ${pr.reps}${pr.rpe ? ` @ ${pr.rpe}` : ""}`;
-}
-
-function getPrKey(pr: BlockPr) {
-	return `${pr.lift}-${pr.reps}-${pr.weight}-${pr.week}`;
-}
-
-function getActualTotal(block: HistoricalBlock) {
-	return liftOrder.reduce(
-		(total, lift) => total + (block.strengthAtEnd?.[lift]?.actualOneRm ?? 0),
-		0,
-	);
-}
-
-function getE1rmTotal(block: HistoricalBlock) {
-	return liftOrder.reduce(
-		(total, lift) =>
-			total +
-			(block.strengthAtEnd?.[lift]?.endE1rm ??
-				block.lifts.find((blockLift) => blockLift.key === lift)?.endE1rm ??
-				0),
-		0,
-	);
-}
-
-function hasThreeRmComparison(block: HistoricalBlock) {
-	return liftOrder.every(
-		(lift) =>
-			block.startingRepPrs?.[lift]?.three && block.endingRepPrs?.[lift]?.three,
-	);
 }
 
 function getSessionStatusCounts(block: HistoricalBlock) {
@@ -600,42 +330,4 @@ function getSessionStatusCounts(block: HistoricalBlock) {
 	}
 
 	return counts;
-}
-
-function getBlockHighlights(block: HistoricalBlock) {
-	const peakStrengthPoint = block.strengthProgression.reduce((best, point) =>
-		point.squat + point.bench + point.deadlift >
-		best.squat + best.bench + best.deadlift
-			? point
-			: best,
-	);
-	const highestVolumePoint = block.weeklyVolume.reduce((best, point) =>
-		point.tonnage.total > best.tonnage.total ? point : best,
-	);
-	const weekSummaries = Object.values(block.weekSummaries);
-	const lowestRpeWeek = weekSummaries.reduce((best, week) =>
-		Number(week.averageRpe) < Number(best.averageRpe) ? week : best,
-	);
-	const highestRpeWeek = weekSummaries.reduce((best, week) =>
-		Number(week.averageRpe) > Number(best.averageRpe) ? week : best,
-	);
-	const mostImprovedLift = block.liftAnalysis.reduce((best, lift) =>
-		getPercentChange(lift.endE1rm, lift.startE1rm) >
-		getPercentChange(best.endE1rm, best.startE1rm)
-			? lift
-			: best,
-	);
-
-	return {
-		peakStrengthWeek: peakStrengthPoint.week.replace("Week ", "W"),
-		highestVolumeWeek: highestVolumePoint.week.replace("Week ", "W"),
-		highestVolume: highestVolumePoint.tonnage.total,
-		lowestRpeWeek: `W${lowestRpeWeek.week}`,
-		lowestRpe: lowestRpeWeek.averageRpe,
-		highestRpeWeek: `W${highestRpeWeek.week}`,
-		highestRpe: highestRpeWeek.averageRpe,
-		mostImprovedLift: `${mostImprovedLift.lift} ${formatPercent(
-			getPercentChange(mostImprovedLift.endE1rm, mostImprovedLift.startE1rm),
-		)}`,
-	};
 }

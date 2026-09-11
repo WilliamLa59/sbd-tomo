@@ -4,19 +4,15 @@ import {
 	Outlet,
 	useRouterState,
 } from "@tanstack/react-router";
-import { ArrowRight, Search } from "lucide-react";
-import { useMemo, useState } from "react";
+import { ArrowRight } from "lucide-react";
 
 import { PageContainer } from "@/components/layout/page-container";
-import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import {
 	currentHistoryBlock,
 	type HistoricalBlock,
 	historicalBlocks,
-	type Lift,
 } from "@/data/history";
 import { cn } from "@/lib/utils";
 
@@ -24,32 +20,13 @@ export const Route = createFileRoute("/app/history")({
 	component: HistoryPage,
 });
 
-type SortOption = "newest" | "oldest";
-type LiftFilter = "all" | Lift;
-
 function HistoryPage() {
 	const pathname = useRouterState({
 		select: (state) => state.location.pathname,
 	});
-	const [searchQuery, setSearchQuery] = useState("");
-	const [sort, setSort] = useState<SortOption>("newest");
-	const [liftFilter, setLiftFilter] = useState<LiftFilter>("all");
-
-	const filteredBlocks = useMemo(() => {
-		return [...historicalBlocks]
-			.filter((block) =>
-				block.title.toLowerCase().includes(searchQuery.trim().toLowerCase()),
-			)
-			.filter((block) =>
-				liftFilter === "all"
-					? true
-					: block.lifts.some((lift) => lift.key === liftFilter),
-			)
-			.sort((a, b) => {
-				const direction = sort === "newest" ? -1 : 1;
-				return direction * a.startDate.localeCompare(b.startDate);
-			});
-	}, [searchQuery, sort, liftFilter]);
+	const blocks = [...historicalBlocks].sort((a, b) =>
+		b.startDate.localeCompare(a.startDate),
+	);
 
 	if (pathname !== "/app/history") {
 		return <Outlet />;
@@ -92,52 +69,9 @@ function HistoryPage() {
 			</div>
 
 			<section className="app-section">
-				<div className="grid gap-3 border bg-card p-3 sm:grid-cols-[minmax(220px,1fr)_auto_auto] sm:items-center">
-					<div className="relative block min-w-0">
-						<Search className="-translate-y-1/2 pointer-events-none absolute top-1/2 left-2.5 size-3.5 text-muted-foreground" />
-						<Input
-							aria-label="Search blocks"
-							className="pl-8"
-							onChange={(event) => setSearchQuery(event.target.value)}
-							placeholder="Search blocks..."
-							type="search"
-							value={searchQuery}
-						/>
-					</div>
-
-					<select
-						aria-label="Sort blocks"
-						className="h-8 border border-input bg-background px-2.5 text-xs outline-none focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring/50"
-						onChange={(event) => setSort(event.target.value as SortOption)}
-						value={sort}
-					>
-						<option value="newest">Newest</option>
-						<option value="oldest">Oldest</option>
-					</select>
-
-					<div className="inline-flex w-fit border bg-background p-0.5">
-						{liftFilters.map((filter) => (
-							<button
-								aria-pressed={liftFilter === filter.value}
-								className={cn(
-									"h-7 px-2.5 text-xs font-medium transition-colors hover:bg-muted",
-									liftFilter === filter.value && "bg-muted text-foreground",
-								)}
-								key={filter.value}
-								onClick={() => setLiftFilter(filter.value)}
-								type="button"
-							>
-								{filter.label}
-							</button>
-						))}
-					</div>
-				</div>
-			</section>
-
-			<section className="app-section">
-				{filteredBlocks.length > 0 ? (
+				{blocks.length > 0 ? (
 					<div className="grid gap-4">
-						{filteredBlocks.map((block) => (
+						{blocks.map((block) => (
 							<HistoryBlockCard block={block} key={block.id} />
 						))}
 					</div>
@@ -159,7 +93,6 @@ function HistoryBlockCard({ block }: { block: HistoricalBlock }) {
 							<h2 className="truncate text-base font-medium tracking-tight">
 								{block.title}
 							</h2>
-							<Badge variant="secondary">{block.status}</Badge>
 						</div>
 						<p className="mt-2 text-sm text-muted-foreground">
 							{block.dateRange}
@@ -210,14 +143,9 @@ function HistoryBlockCard({ block }: { block: HistoricalBlock }) {
 
 					<div className="grid gap-3 text-xs sm:grid-cols-3 xl:block xl:space-y-3">
 						<ArchiveStat
-							label="Total volume"
-							value={`${formatNumber(block.totalVolume)} lb`}
-						/>
-						<ArchiveStat
 							label="Sessions"
 							value={`${block.completedSessions} / ${block.totalSessions}`}
 						/>
-						<ArchiveStat label="Adherence" value={`${block.adherence}%`} />
 					</div>
 
 					<Link
@@ -271,21 +199,10 @@ function EmptyState() {
 	);
 }
 
-const liftFilters: Array<{ label: string; value: LiftFilter }> = [
-	{ label: "All", value: "all" },
-	{ label: "Squat", value: "squat" },
-	{ label: "Bench", value: "bench" },
-	{ label: "Deadlift", value: "deadlift" },
-];
-
 function getPercentChange(end: number, start: number) {
 	return Number((((end - start) / start) * 100).toFixed(1));
 }
 
 function formatPercent(value: number) {
 	return value > 0 ? `+${value}%` : `${value}%`;
-}
-
-function formatNumber(value: number) {
-	return value.toLocaleString("en-US");
 }

@@ -15,30 +15,6 @@ export type LiftBlockAnalysis = LiftProgression & {
 	peakWeek: string;
 	bestPerformance: string;
 	totalWorkSets: number;
-	averageTopSetRpe: number;
-	averageRpeVariance: number;
-};
-
-type RepMaxes = {
-	one?: number;
-	two?: number;
-	three?: number;
-	five?: number;
-};
-
-export type StrengthAtEnd = {
-	actualOneRm?: number;
-	bestThreeRm?: number;
-	bestFiveRm?: number;
-	endE1rm: number;
-};
-
-export type BlockPr = {
-	lift: Lift;
-	reps: 1 | 2 | 3 | 5;
-	weight: number;
-	rpe?: number;
-	week: number;
 };
 
 export type BlockAdjustment = {
@@ -88,19 +64,13 @@ export type HistoricalBlock = {
 	dateRange: string;
 	startDate: string;
 	weeks: number;
-	status: "Completed";
 	totalVolume: number;
 	completedSessions: number;
 	totalSessions: number;
-	adherence: number;
 	lifts: readonly LiftProgression[];
 	liftAnalysis: readonly LiftBlockAnalysis[];
 	intent?: string;
 	endingNotes?: string;
-	strengthAtEnd?: Partial<Record<Lift, StrengthAtEnd>>;
-	startingRepPrs?: Partial<Record<Lift, RepMaxes>>;
-	endingRepPrs?: Partial<Record<Lift, RepMaxes>>;
-	prs?: readonly BlockPr[];
 	programAdjustments?: readonly BlockAdjustment[];
 	strengthProgression: readonly StrengthProgressionPoint[];
 	weeklyVolume: readonly WeeklyVolumePoint[];
@@ -121,11 +91,9 @@ export const historicalBlocks: readonly HistoricalBlock[] = [
 		dateRange: "Jun 29 - Aug 7",
 		startDate: "2026-06-29",
 		weeks: 6,
-		status: "Completed",
 		totalVolume: 184_200,
 		completedSessions: 27,
 		totalSessions: 30,
-		adherence: 94,
 		intent:
 			"Build work capacity across the big 3 while maintaining regular exposure to heavy singles.",
 		lifts: [
@@ -143,8 +111,6 @@ export const historicalBlocks: readonly HistoricalBlock[] = [
 				"Week 5",
 				"455 x 2 @ 8",
 				42,
-				7.4,
-				0.3,
 			),
 			liftAnalysis(
 				"Bench",
@@ -155,8 +121,6 @@ export const historicalBlocks: readonly HistoricalBlock[] = [
 				"Week 5",
 				"315 x 1 @ 8",
 				64,
-				7.2,
-				0.1,
 			),
 			liftAnalysis(
 				"Deadlift",
@@ -167,44 +131,7 @@ export const historicalBlocks: readonly HistoricalBlock[] = [
 				"Week 5",
 				"475 x 2 @ 7",
 				36,
-				7.3,
-				-0.2,
 			),
-		],
-		strengthAtEnd: {
-			squat: {
-				actualOneRm: 455,
-				bestThreeRm: 445,
-				bestFiveRm: 405,
-				endE1rm: 465,
-			},
-			bench: {
-				actualOneRm: 315,
-				bestThreeRm: 295,
-				bestFiveRm: 275,
-				endE1rm: 315,
-			},
-			deadlift: {
-				actualOneRm: 475,
-				bestThreeRm: 455,
-				bestFiveRm: 405,
-				endE1rm: 480,
-			},
-		},
-		startingRepPrs: {
-			squat: { three: 425 },
-			bench: { three: 280 },
-			deadlift: { three: 435 },
-		},
-		endingRepPrs: {
-			squat: { three: 445 },
-			bench: { three: 295 },
-			deadlift: { three: 455 },
-		},
-		prs: [
-			{ lift: "squat", reps: 2, weight: 455, rpe: 8, week: 5 },
-			{ lift: "bench", reps: 1, weight: 315, rpe: 8, week: 6 },
-			{ lift: "deadlift", reps: 2, weight: 475, rpe: 7, week: 5 },
 		],
 		programAdjustments: [
 			{ week: 5, description: "Bench volume reduced" },
@@ -318,11 +245,9 @@ export const historicalBlocks: readonly HistoricalBlock[] = [
 		dateRange: "May 18 - Jun 26",
 		startDate: "2026-05-18",
 		weeks: 6,
-		status: "Completed",
 		totalVolume: 161_850,
 		completedSessions: 28,
 		totalSessions: 30,
-		adherence: 96,
 		intent:
 			"Increase heavy single consistency while keeping enough backdown work to hold weekly skill practice.",
 		lifts: [
@@ -340,8 +265,6 @@ export const historicalBlocks: readonly HistoricalBlock[] = [
 				"Week 5",
 				"435 x 2 @ 8",
 				38,
-				7.5,
-				0.2,
 			),
 			liftAnalysis(
 				"Bench",
@@ -352,8 +275,6 @@ export const historicalBlocks: readonly HistoricalBlock[] = [
 				"Week 5",
 				"295 x 2 @ 8",
 				58,
-				7.3,
-				0.1,
 			),
 			liftAnalysis(
 				"Deadlift",
@@ -364,43 +285,7 @@ export const historicalBlocks: readonly HistoricalBlock[] = [
 				"Week 5",
 				"450 x 2 @ 7",
 				32,
-				7.4,
-				0.0,
 			),
-		],
-		strengthAtEnd: {
-			squat: {
-				actualOneRm: 435,
-				bestThreeRm: 425,
-				bestFiveRm: 395,
-				endE1rm: 438,
-			},
-			bench: {
-				actualOneRm: 295,
-				bestThreeRm: 285,
-				bestFiveRm: 265,
-				endE1rm: 300,
-			},
-			deadlift: {
-				actualOneRm: 455,
-				bestThreeRm: 435,
-				bestFiveRm: 395,
-				endE1rm: 455,
-			},
-		},
-		startingRepPrs: {
-			squat: { three: 415 },
-			bench: { three: 275 },
-			deadlift: { three: 425 },
-		},
-		endingRepPrs: {
-			squat: { three: 425 },
-			bench: { three: 285 },
-			deadlift: { three: 435 },
-		},
-		prs: [
-			{ lift: "squat", reps: 2, weight: 435, rpe: 8, week: 5 },
-			{ lift: "bench", reps: 2, weight: 295, rpe: 8, week: 5 },
 		],
 		strengthProgression: [
 			{ week: "Week 1", squat: 422, bench: 292, deadlift: 444 },
@@ -511,11 +396,9 @@ export const historicalBlocks: readonly HistoricalBlock[] = [
 		dateRange: "Apr 6 - May 8",
 		startDate: "2026-04-06",
 		weeks: 5,
-		status: "Completed",
 		totalVolume: 176_400,
 		completedSessions: 24,
 		totalSessions: 25,
-		adherence: 95,
 		intent:
 			"Accumulate submaximal hypertrophy work across squat, bench, and deadlift variations.",
 		lifts: [
@@ -533,8 +416,6 @@ export const historicalBlocks: readonly HistoricalBlock[] = [
 				"Week 4",
 				"395 x 5 @ 8",
 				50,
-				7.1,
-				-0.1,
 			),
 			liftAnalysis(
 				"Bench",
@@ -545,8 +426,6 @@ export const historicalBlocks: readonly HistoricalBlock[] = [
 				"Week 4",
 				"275 x 5 @ 8",
 				76,
-				7.0,
-				0.0,
 			),
 			liftAnalysis(
 				"Deadlift",
@@ -557,41 +436,8 @@ export const historicalBlocks: readonly HistoricalBlock[] = [
 				"Week 4",
 				"425 x 4 @ 7",
 				40,
-				7.2,
-				0.1,
 			),
 		],
-		strengthAtEnd: {
-			squat: {
-				actualOneRm: 415,
-				bestThreeRm: 405,
-				bestFiveRm: 395,
-				endE1rm: 422,
-			},
-			bench: {
-				actualOneRm: 285,
-				bestThreeRm: 275,
-				bestFiveRm: 275,
-				endE1rm: 292,
-			},
-			deadlift: {
-				actualOneRm: 435,
-				bestThreeRm: 425,
-				bestFiveRm: 405,
-				endE1rm: 444,
-			},
-		},
-		startingRepPrs: {
-			squat: { three: 395 },
-			bench: { three: 265 },
-			deadlift: { three: 415 },
-		},
-		endingRepPrs: {
-			squat: { three: 405 },
-			bench: { three: 275 },
-			deadlift: { three: 425 },
-		},
-		prs: [{ lift: "squat", reps: 5, weight: 395, rpe: 8, week: 4 }],
 		strengthProgression: [
 			{ week: "Week 1", squat: 415, bench: 286, deadlift: 438 },
 			{ week: "Week 2", squat: 417, bench: 288, deadlift: 439 },
@@ -690,8 +536,6 @@ function liftAnalysis(
 	peakWeek: string,
 	bestPerformance: string,
 	totalWorkSets: number,
-	averageTopSetRpe: number,
-	averageRpeVariance: number,
 ): LiftBlockAnalysis {
 	return {
 		lift,
@@ -702,8 +546,6 @@ function liftAnalysis(
 		peakWeek,
 		bestPerformance,
 		totalWorkSets,
-		averageTopSetRpe,
-		averageRpeVariance,
 	};
 }
 

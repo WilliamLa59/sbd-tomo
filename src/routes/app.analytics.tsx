@@ -1,7 +1,7 @@
 // src/routes/app.analytics.tsx
 
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowUpRight, Award } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { useState } from "react";
 import {
 	CartesianGrid,
@@ -26,58 +26,106 @@ export const Route = createFileRoute("/app/analytics")({
 const liftMetrics = [
 	{
 		lift: "Squat",
-		pr: "405",
-		change: 2.7,
-		prDate: "May 21 2026",
-	},
-	{
-		lift: "Bench",
-		pr: "285",
-		change: 1.9,
-		prDate: "May 27 2026",
-	},
-	{
-		lift: "Deadlift",
-		pr: "525",
-		change: 3.4,
-		prDate: "May 24 2026",
-	},
-	{
-		lift: "Total",
-		pr: "1,215",
-		change: 2.8,
-		prDate: "May 27 2026",
-	},
-] as const;
-
-const estimatedMetrics = [
-	{
-		lift: "Squat",
 		e1rm: "447",
-		actual: "405",
-		gap: "+42",
-		change: 2.7,
+		changeKey: "squat",
 	},
 	{
 		lift: "Bench",
 		e1rm: "315",
-		actual: "285",
-		gap: "+30",
-		change: 1.9,
+		changeKey: "bench",
 	},
 	{
 		lift: "Deadlift",
 		e1rm: "545",
-		actual: "525",
-		gap: "+20",
-		change: 3.4,
+		changeKey: "deadlift",
 	},
 	{
-		lift: "Total",
+		lift: "Estimated Total",
 		e1rm: "1,307",
-		actual: "1,215",
-		gap: "+92",
-		change: 2.8,
+		changeKey: "total",
+	},
+] as const;
+
+const personalRecords = [
+	{
+		lift: "Squat",
+		records: [
+			{ label: "Best Single", value: "405 x 1", date: "May 21 2026" },
+			{ label: "Best Triple", value: "385 x 3", date: "Apr 12 2026" },
+			{ label: "Best 5-Rep Set", value: "365 x 5", date: "Mar 18 2026" },
+			{
+				label: "Peak e1RM",
+				value: "447 lb",
+				date: "May 21 2026",
+				isEstimate: true,
+			},
+		],
+	},
+	{
+		lift: "Bench",
+		records: [
+			{ label: "Best Single", value: "285 x 1", date: "May 27 2026" },
+			{ label: "Best Triple", value: "270 x 3", date: "Apr 19 2026" },
+			{ label: "Best 5-Rep Set", value: "255 x 5", date: "Mar 21 2026" },
+			{
+				label: "Peak e1RM",
+				value: "315 lb",
+				date: "May 27 2026",
+				isEstimate: true,
+			},
+		],
+	},
+	{
+		lift: "Deadlift",
+		records: [
+			{ label: "Best Single", value: "525 x 1", date: "May 24 2026" },
+			{ label: "Best Triple", value: "505 x 3", date: "Apr 16 2026" },
+			{ label: "Best 5-Rep Set", value: "475 x 5", date: "Mar 25 2026" },
+			{
+				label: "Peak e1RM",
+				value: "545 lb",
+				date: "May 24 2026",
+				isEstimate: true,
+			},
+		],
+	},
+] as const;
+
+const blockProgression = [
+	{
+		block: "Block 6",
+		squat: { percent: 1.6, pounds: 7 },
+		bench: { percent: 1.2, pounds: 3 },
+		deadlift: { percent: 2.1, pounds: 10 },
+		total: { percent: 1.7, pounds: 20 },
+	},
+	{
+		block: "Block 7",
+		squat: { percent: 2.4, pounds: 10 },
+		bench: { percent: 1.5, pounds: 4 },
+		deadlift: { percent: 2.8, pounds: 14 },
+		total: { percent: 2.3, pounds: 28 },
+	},
+	{
+		block: "Block 8",
+		squat: { percent: 1.1, pounds: 5 },
+		bench: { percent: 0.9, pounds: 3 },
+		deadlift: { percent: 1.6, pounds: 8 },
+		total: { percent: 1.2, pounds: 16 },
+	},
+	{
+		block: "Block 9",
+		squat: { percent: 2.7, pounds: 12 },
+		bench: { percent: 1.6, pounds: 5 },
+		deadlift: { percent: 2.3, pounds: 12 },
+		total: { percent: 2.3, pounds: 29 },
+	},
+	{
+		block: "Block 10",
+		squat: { percent: 3.2, pounds: 15 },
+		bench: { percent: 1.8, pounds: 5 },
+		deadlift: { percent: 4.1, pounds: 20 },
+		total: { percent: 3.1, pounds: 40 },
 	},
 ] as const;
 
@@ -85,160 +133,104 @@ const strengthTrendData = [
 	{
 		date: "2022-01-20",
 		label: "Jan 2022",
-		squat: 275,
-		bench: 185,
-		deadlift: 335,
+		squat: 305,
+		bench: 205,
+		deadlift: 355,
 	},
 	{
 		date: "2022-06-15",
 		label: "Jun 2022",
-		squat: 295,
-		bench: 195,
-		deadlift: 365,
+		squat: 325,
+		bench: 215,
+		deadlift: 385,
 	},
 	{
 		date: "2022-12-12",
 		label: "Dec 2022",
-		squat: 315,
-		bench: 205,
-		deadlift: 385,
+		squat: 345,
+		bench: 230,
+		deadlift: 410,
 	},
 	{
 		date: "2023-06-07",
 		label: "Jun 2023",
-		squat: 335,
-		bench: 225,
-		deadlift: 415,
+		squat: 365,
+		bench: 245,
+		deadlift: 435,
 	},
 	{
 		date: "2023-12-04",
 		label: "Dec 2023",
-		squat: 350,
-		bench: 240,
-		deadlift: 440,
+		squat: 382,
+		bench: 260,
+		deadlift: 462,
 	},
 	{
 		date: "2024-06-12",
 		label: "Jun 2024",
-		squat: 365,
-		bench: 250,
-		deadlift: 465,
+		squat: 398,
+		bench: 272,
+		deadlift: 488,
 	},
 	{
 		date: "2024-12-09",
 		label: "Dec 2024",
-		squat: 375,
-		bench: 260,
-		deadlift: 485,
+		squat: 410,
+		bench: 285,
+		deadlift: 508,
 	},
 	{
 		date: "2025-06-18",
 		label: "Jun 2025",
-		squat: 385,
-		bench: 270,
-		deadlift: 505,
+		squat: 422,
+		bench: 298,
+		deadlift: 522,
 	},
 	{
 		date: "2025-12-14",
 		label: "Dec 2025",
-		squat: 395,
-		bench: 280,
-		deadlift: 515,
+		squat: 435,
+		bench: 309,
+		deadlift: 525,
 	},
 	{
 		date: "2026-03-15",
 		label: "Mar 2026",
-		squat: 395,
-		bench: 280,
-		deadlift: 515,
+		squat: 438,
+		bench: 310,
+		deadlift: 530,
 	},
-	{ date: "2026-04-05", label: "Apr 5", squat: 395, bench: 280, deadlift: 515 },
+	{ date: "2026-04-05", label: "Apr 5", squat: 440, bench: 311, deadlift: 534 },
 	{
 		date: "2026-04-27",
 		label: "Apr 27",
-		squat: 395,
-		bench: 280,
-		deadlift: 515,
+		squat: 442,
+		bench: 312,
+		deadlift: 538,
 	},
 	{
 		date: "2026-05-10",
 		label: "May 10",
-		squat: 395,
-		bench: 280,
-		deadlift: 515,
+		squat: 444,
+		bench: 313,
+		deadlift: 541,
 	},
 	{
 		date: "2026-05-27",
 		label: "May 27",
-		squat: 405,
-		bench: 285,
-		deadlift: 525,
+		squat: 447,
+		bench: 315,
+		deadlift: 545,
 	},
 ] as const;
 
-const prMilestones = [
-	{
-		lift: "Squat",
-		records: [
-			{ date: "May 21 2026", weight: 405 },
-			{ date: "Dec 14 2025", weight: 395 },
-			{ date: "Jun 18 2025", weight: 385 },
-			{ date: "Dec 9 2024", weight: 375 },
-			{ date: "Jun 12 2024", weight: 365 },
-			{ date: "Dec 4 2023", weight: 350 },
-			{ date: "Jun 7 2023", weight: 335 },
-			{ date: "Dec 12 2022", weight: 315 },
-			{ date: "Jun 15 2022", weight: 295 },
-			{ date: "Jan 20 2022", weight: 275 },
-		],
-	},
-	{
-		lift: "Bench",
-		records: [
-			{ date: "May 27 2026", weight: 285 },
-			{ date: "Dec 16 2025", weight: 280 },
-			{ date: "Jun 20 2025", weight: 270 },
-			{ date: "Dec 11 2024", weight: 260 },
-			{ date: "Jun 14 2024", weight: 250 },
-			{ date: "Dec 6 2023", weight: 240 },
-			{ date: "Jun 9 2023", weight: 225 },
-			{ date: "Dec 14 2022", weight: 205 },
-			{ date: "Jun 17 2022", weight: 195 },
-			{ date: "Jan 22 2022", weight: 185 },
-		],
-	},
-	{
-		lift: "Deadlift",
-		records: [
-			{ date: "May 24 2026", weight: 525 },
-			{ date: "Dec 18 2025", weight: 515 },
-			{ date: "Jun 22 2025", weight: 505 },
-			{ date: "Dec 13 2024", weight: 485 },
-			{ date: "Jun 16 2024", weight: 465 },
-			{ date: "Dec 8 2023", weight: 440 },
-			{ date: "Jun 11 2023", weight: 415 },
-			{ date: "Dec 16 2022", weight: 385 },
-			{ date: "Jun 19 2022", weight: 365 },
-			{ date: "Jan 24 2022", weight: 335 },
-		],
-	},
-] as const;
-
-const rangeOptions = ["All", "5Y", "1Y", "YTD", "6M", "1M"] as const;
+const rangeOptions = ["3M", "6M", "1Y", "All"] as const;
+const liftFilterOptions = ["All", "Squat", "Bench", "Deadlift"] as const;
 
 type RangeOption = (typeof rangeOptions)[number];
+type LiftFilterOption = (typeof liftFilterOptions)[number];
 type StrengthTrendPoint = (typeof strengthTrendData)[number];
-
-const totalOutlook = {
-	actualTotal: "1,215",
-	estimatedTotal: "1,307",
-	gap: "+92",
-	bestMovingLift: "Deadlift",
-	bestMovingChange: 3.4,
-	lastPrLift: "Bench",
-	lastPrWeight: "285 lb",
-	lastPrDate: "May 27 2026",
-} as const;
+type LiftChangeKey = (typeof liftMetrics)[number]["changeKey"];
 
 function getFilteredTrendData(
 	range: RangeOption,
@@ -287,6 +279,24 @@ function getRangeSummary(data: readonly StrengthTrendPoint[]) {
 	};
 }
 
+function getRangeMonths(data: readonly StrengthTrendPoint[]) {
+	const firstPoint = data[0];
+	const lastPoint = data.at(-1);
+
+	if (!firstPoint || !lastPoint) {
+		return 1;
+	}
+
+	const startDate = parseTrendDate(firstPoint);
+	const endDate = parseTrendDate(lastPoint);
+	const monthSpan =
+		(endDate.getFullYear() - startDate.getFullYear()) * 12 +
+		(endDate.getMonth() - startDate.getMonth()) +
+		(endDate.getDate() - startDate.getDate()) / 30;
+
+	return Math.max(monthSpan, 1);
+}
+
 function getRangeChange(start: number, end: number) {
 	return {
 		percent: getPercentChange(start, end),
@@ -303,12 +313,8 @@ function getPercentChange(start: number, end: number) {
 }
 
 function getRangeCutoffDate(range: RangeOption, latestDate: Date) {
-	if (range === "YTD") {
-		return new Date(latestDate.getFullYear(), 0, 1);
-	}
-
-	if (range === "5Y") {
-		return shiftDate(latestDate, { years: -5 });
+	if (range === "3M") {
+		return shiftDate(latestDate, { months: -3 });
 	}
 
 	if (range === "1Y") {
@@ -317,10 +323,6 @@ function getRangeCutoffDate(range: RangeOption, latestDate: Date) {
 
 	if (range === "6M") {
 		return shiftDate(latestDate, { months: -6 });
-	}
-
-	if (range === "1M") {
-		return shiftDate(latestDate, { months: -1 });
 	}
 
 	return null;
@@ -351,6 +353,10 @@ function parseTrendDate(point: StrengthTrendPoint) {
 }
 
 function AnalyticsPage() {
+	const [selectedRange, setSelectedRange] = useState<RangeOption>("6M");
+	const chartData = getFilteredTrendData(selectedRange);
+	const rangeSummary = getRangeSummary(chartData);
+
 	return (
 		<PageContainer className="pt-5 md:pt-7">
 			<div>
@@ -364,35 +370,37 @@ function AnalyticsPage() {
 			</div>
 
 			<section className="app-section">
-				<SectionHeader label="Actuals" />
+				<SectionHeader label="Current Strength" />
 
 				<div className="app-section-body grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
 					{liftMetrics.map((metric) => (
-						<LiftMetricCard key={metric.lift} {...metric} />
+						<LiftMetricCard
+							key={metric.lift}
+							change={rangeSummary[metric.changeKey]}
+							e1rm={metric.e1rm}
+							lift={metric.lift}
+							range={selectedRange}
+						/>
 					))}
 				</div>
 			</section>
 
 			<section className="app-section">
-				<StrengthTrendCard />
+				<StrengthTrendCard
+					chartData={chartData}
+					onRangeChange={setSelectedRange}
+					rangeMonths={getRangeMonths(chartData)}
+					rangeSummary={rangeSummary}
+					selectedRange={selectedRange}
+				/>
 			</section>
 
 			<section className="app-section">
-				<PrMilestonesCard />
+				<PersonalRecordsCard />
 			</section>
 
 			<section className="app-section">
-				<SectionHeader label="Estimates and Projections" />
-
-				<div className="app-section-body">
-					<TotalOutlookCard />
-				</div>
-
-				<div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-					{estimatedMetrics.map((metric) => (
-						<EstimatedMetricCard key={metric.lift} {...metric} />
-					))}
-				</div>
+				<BlockProgressionCard />
 			</section>
 		</PageContainer>
 	);
@@ -406,112 +414,47 @@ function SectionHeader({ label }: { label: string }) {
 	);
 }
 
-function TotalOutlookCard() {
+type LiftMetricCardProps = {
+	lift: string;
+	e1rm: string;
+	change: {
+		percent: number;
+		pounds: number;
+	};
+	range: RangeOption;
+};
+
+function LiftMetricCard({ lift, e1rm, change, range }: LiftMetricCardProps) {
 	return (
 		<Card className="shadow-none">
-			<CardContent className="p-5 sm:p-6">
+			<CardContent className="p-5">
 				<div>
 					<p className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
-						Total outlook
+						{lift}
 					</p>
 
 					<div className="mt-4 flex items-end gap-2">
 						<span className="font-mono text-3xl font-medium tracking-[-0.05em] md:text-4xl">
-							{totalOutlook.estimatedTotal}
+							{e1rm}
 						</span>
 						<span className="mb-1 font-mono text-xs text-muted-foreground">
-							LB EST.
+							LB e1RM
 						</span>
-					</div>
-				</div>
-
-				<div className="mt-5 grid gap-3 border-t pt-5">
-					<OutlookRow
-						label="Actual total"
-						value={`${totalOutlook.actualTotal} lb`}
-					/>
-					<OutlookRow label="Estimated gap" value={`${totalOutlook.gap} lb`} />
-					<OutlookRow
-						label="Best moving lift"
-						value={`${totalOutlook.bestMovingLift} +${totalOutlook.bestMovingChange.toFixed(1)}%`}
-						valueClassName="text-success"
-					/>
-					<OutlookRow
-						label="Last 1RM PR"
-						value={`${totalOutlook.lastPrLift} ${totalOutlook.lastPrWeight}`}
-					/>
-				</div>
-
-				<p className="mt-3 text-xs text-muted-foreground">
-					{totalOutlook.lastPrDate}
-				</p>
-			</CardContent>
-		</Card>
-	);
-}
-
-function OutlookRow({
-	label,
-	value,
-	valueClassName,
-}: {
-	label: string;
-	value: string;
-	valueClassName?: string;
-}) {
-	return (
-		<div className="flex items-center justify-between gap-3 text-xs">
-			<span className="text-muted-foreground">{label}</span>
-			<span className={cn("font-mono font-medium", valueClassName)}>
-				{value}
-			</span>
-		</div>
-	);
-}
-
-type LiftMetricCardProps = {
-	lift: string;
-	pr: string;
-	change: number;
-	prDate: string;
-};
-
-function LiftMetricCard({ lift, pr, change, prDate }: LiftMetricCardProps) {
-	return (
-		<Card className="shadow-none">
-			<CardContent className="p-5">
-				<div className="flex items-start justify-between gap-4">
-					<div>
-						<p className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
-							{lift}
-						</p>
-
-						<div className="mt-4 flex items-end gap-2">
-							<span className="font-mono text-3xl font-medium tracking-[-0.05em] md:text-4xl">
-								{pr}
-							</span>
-							<span className="mb-1 font-mono text-xs text-muted-foreground">
-								LB PR
-							</span>
-						</div>
-					</div>
-
-					<div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-						<Award className="size-4" />
 					</div>
 				</div>
 
 				<div className="mt-4 flex items-center justify-between gap-3 border-t pt-4 text-xs">
 					<div>
-						<p className="text-muted-foreground">Current PR</p>
-						<p className="mt-1 text-xs text-muted-foreground">{prDate}</p>
+						<p className="uppercase text-muted-foreground">{range} change</p>
+						<p className="mt-1 font-mono text-sm font-medium">
+							{formatSignedPounds(change.pounds)}
+						</p>
 					</div>
 
 					<div className="text-right">
-						<p className="text-muted-foreground">Recent trend</p>
 						<p className="mt-1 inline-flex items-center justify-end gap-1 font-mono text-sm font-medium text-success">
 							<ArrowUpRight className="size-3.5" />
-							{change.toFixed(1)}%
+							{formatSignedPercent(change.percent)}
 						</p>
 					</div>
 				</div>
@@ -520,65 +463,20 @@ function LiftMetricCard({ lift, pr, change, prDate }: LiftMetricCardProps) {
 	);
 }
 
-type EstimatedMetricCardProps = {
-	lift: string;
-	e1rm: string;
-	actual: string;
-	gap: string;
-	change: number;
-};
-
-function EstimatedMetricCard({
-	lift,
-	e1rm,
-	actual,
-	gap,
-	change,
-}: EstimatedMetricCardProps) {
-	return (
-		<Card className="shadow-none">
-			<CardContent className="p-5">
-				<p className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
-					{lift}
-				</p>
-
-				<div className="mt-4 flex items-end gap-2">
-					<span className="font-mono text-3xl font-medium tracking-[-0.05em] md:text-4xl">
-						{e1rm}
-					</span>
-					<span className="mb-1 font-mono text-xs text-muted-foreground">
-						LB EST.
-					</span>
-				</div>
-
-				<div className="mt-4 grid gap-2 border-t pt-4 text-xs">
-					<div className="flex items-center justify-between gap-3">
-						<span className="text-muted-foreground">Actual PR</span>
-						<span className="font-mono font-medium">{actual} lb</span>
-					</div>
-
-					<div className="flex items-center justify-between gap-3">
-						<span className="text-muted-foreground">Estimated gap</span>
-						<span className="font-mono font-medium">{gap} lb</span>
-					</div>
-
-					<div className="flex items-center justify-between gap-3">
-						<span className="text-muted-foreground">Trend</span>
-						<span className="inline-flex items-center gap-1 font-mono font-medium text-success">
-							<ArrowUpRight className="size-3.5" />
-							{change.toFixed(1)}%
-						</span>
-					</div>
-				</div>
-			</CardContent>
-		</Card>
-	);
-}
-
-function StrengthTrendCard() {
-	const [selectedRange, setSelectedRange] = useState<RangeOption>("6M");
-	const chartData = getFilteredTrendData(selectedRange);
-	const summary = getRangeSummary(chartData);
+function StrengthTrendCard({
+	chartData,
+	rangeMonths,
+	rangeSummary,
+	selectedRange,
+	onRangeChange,
+}: {
+	chartData: readonly StrengthTrendPoint[];
+	rangeMonths: number;
+	rangeSummary: Record<LiftChangeKey, { percent: number; pounds: number }>;
+	selectedRange: RangeOption;
+	onRangeChange: (range: RangeOption) => void;
+}) {
+	const [selectedLift, setSelectedLift] = useState<LiftFilterOption>("All");
 
 	return (
 		<Card className="shadow-none">
@@ -586,26 +484,42 @@ function StrengthTrendCard() {
 				<div className="flex flex-wrap items-start justify-between gap-4">
 					<div>
 						<p className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
-							1RM progress
+							Strength progression
 						</p>
 
 						<h2 className="mt-2 text-base font-medium tracking-tight">
-							Max strength by lift
+							Estimated 1RM over time
 						</h2>
 					</div>
 
-					<div className="flex flex-wrap gap-1">
-						{rangeOptions.map((range) => (
-							<Button
-								key={range}
-								type="button"
-								variant={selectedRange === range ? "secondary" : "ghost"}
-								size="xs"
-								onClick={() => setSelectedRange(range)}
-							>
-								{range}
-							</Button>
-						))}
+					<div className="flex flex-wrap justify-end gap-3">
+						<div className="flex flex-wrap gap-1">
+							{liftFilterOptions.map((lift) => (
+								<Button
+									key={lift}
+									type="button"
+									variant={selectedLift === lift ? "secondary" : "ghost"}
+									size="xs"
+									onClick={() => setSelectedLift(lift)}
+								>
+									{lift}
+								</Button>
+							))}
+						</div>
+
+						<div className="flex flex-wrap gap-1">
+							{rangeOptions.map((range) => (
+								<Button
+									key={range}
+									type="button"
+									variant={selectedRange === range ? "secondary" : "ghost"}
+									size="xs"
+									onClick={() => onRangeChange(range)}
+								>
+									{range}
+								</Button>
+							))}
+						</div>
 					</div>
 				</div>
 
@@ -633,108 +547,135 @@ function StrengthTrendCard() {
 								tick={{ fill: "var(--muted-foreground)", fontSize: 11 }}
 							/>
 							<Tooltip content={<StrengthTooltip />} />
-							<Line
-								type="monotone"
-								dataKey="squat"
-								name="Squat"
-								stroke="var(--brand)"
-								strokeWidth={2}
-								dot={false}
-								activeDot={{ r: 4 }}
-							/>
-							<Line
-								type="monotone"
-								dataKey="bench"
-								name="Bench"
-								stroke="var(--chart-3)"
-								strokeWidth={2}
-								dot={false}
-								activeDot={{ r: 4 }}
-							/>
-							<Line
-								type="monotone"
-								dataKey="deadlift"
-								name="Deadlift"
-								stroke="var(--chart-5)"
-								strokeWidth={2}
-								dot={false}
-								activeDot={{ r: 4 }}
-							/>
+							{(selectedLift === "All" || selectedLift === "Squat") && (
+								<Line
+									type="monotone"
+									dataKey="squat"
+									name="Squat"
+									stroke="var(--brand)"
+									strokeWidth={2}
+									dot={false}
+									activeDot={{ r: 4 }}
+								/>
+							)}
+							{(selectedLift === "All" || selectedLift === "Bench") && (
+								<Line
+									type="monotone"
+									dataKey="bench"
+									name="Bench"
+									stroke="var(--chart-3)"
+									strokeWidth={2}
+									dot={false}
+									activeDot={{ r: 4 }}
+								/>
+							)}
+							{(selectedLift === "All" || selectedLift === "Deadlift") && (
+								<Line
+									type="monotone"
+									dataKey="deadlift"
+									name="Deadlift"
+									stroke="var(--chart-5)"
+									strokeWidth={2}
+									dot={false}
+									activeDot={{ r: 4 }}
+								/>
+							)}
 						</LineChart>
 					</ResponsiveContainer>
 				</div>
 
 				<div className="mt-4 flex flex-wrap gap-4 text-xs text-muted-foreground">
-					<LegendSwatch className="bg-brand" label="Squat" />
-					<LegendSwatch className="bg-chart-3" label="Bench" />
-					<LegendSwatch className="bg-chart-5" label="Deadlift" />
+					{(selectedLift === "All" || selectedLift === "Squat") && (
+						<LegendSwatch className="bg-brand" label="Squat" />
+					)}
+					{(selectedLift === "All" || selectedLift === "Bench") && (
+						<LegendSwatch className="bg-chart-3" label="Bench" />
+					)}
+					{(selectedLift === "All" || selectedLift === "Deadlift") && (
+						<LegendSwatch className="bg-chart-5" label="Deadlift" />
+					)}
 				</div>
 
 				<div className="mt-5 grid gap-3 border-t pt-5 sm:grid-cols-4">
-					<RangeSummary label="Squat" change={summary.squat} />
-					<RangeSummary label="Bench" change={summary.bench} />
-					<RangeSummary label="Deadlift" change={summary.deadlift} />
-					<RangeSummary label="Total" change={summary.total} />
+					<RangeSummary
+						change={rangeSummary.squat}
+						label="Squat"
+						months={rangeMonths}
+					/>
+					<RangeSummary
+						change={rangeSummary.bench}
+						label="Bench"
+						months={rangeMonths}
+					/>
+					<RangeSummary
+						change={rangeSummary.deadlift}
+						label="Deadlift"
+						months={rangeMonths}
+					/>
+					<RangeSummary
+						change={rangeSummary.total}
+						label="Total"
+						months={rangeMonths}
+					/>
 				</div>
 			</CardContent>
 		</Card>
 	);
 }
 
-function PrMilestonesCard() {
+function PersonalRecordsCard() {
 	return (
 		<Card className="shadow-none">
 			<CardContent className="p-5 sm:p-6">
 				<div>
 					<p className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
-						1RM milestones
+						Personal records
 					</p>
 
 					<h2 className="mt-2 text-base font-medium tracking-tight">
-						Max progression by lift
+						Best performances by lift
 					</h2>
 				</div>
 
 				<div className="mt-6 grid gap-4 lg:grid-cols-3">
-					{prMilestones.map((group) => (
+					{personalRecords.map((group) => (
 						<div key={group.lift} className="min-w-0 border bg-background">
 							<div className="flex items-center justify-between gap-3 border-b px-4 py-3">
 								<h3 className="text-sm font-medium">{group.lift}</h3>
-								<Badge variant="secondary">1RM</Badge>
+								<Badge variant="secondary">PRs</Badge>
 							</div>
 
-							<div className="max-h-80 overflow-y-auto">
-								{group.records.map((record, index) => {
-									const previousRecord = group.records[index + 1];
-									const increase = previousRecord
-										? record.weight - previousRecord.weight
-										: undefined;
+							<div>
+								{group.records.map((record) => (
+									<div
+										key={`${group.lift}-${record.label}`}
+										className={cn(
+											"grid grid-cols-[minmax(0,1fr)_auto] gap-3 border-b px-4 py-3 last:border-b-0",
+											"isEstimate" in record &&
+												record.isEstimate &&
+												"bg-muted/35",
+										)}
+									>
+										<p className="min-w-0 text-xs text-muted-foreground">
+											{record.label}
+										</p>
 
-									return (
-										<div
-											key={`${group.lift}-${record.date}-${record.weight}`}
-											className="grid grid-cols-[6.5rem_minmax(0,1fr)_auto] items-center gap-3 border-b px-4 py-3 last:border-b-0"
-										>
-											<p className="font-mono text-xs text-muted-foreground">
-												{record.date}
-											</p>
-
-											<p className="min-w-0 font-mono text-sm font-medium">
-												{record.weight} lb
-											</p>
-
-											{increase ? (
-												<span className="font-mono text-xs font-medium text-success">
-													+{increase}
-												</span>
-											) : (
-												<span className="font-mono text-xs text-muted-foreground">
-													Base
-												</span>
+										<p
+											className={cn(
+												"text-right font-mono text-sm font-medium",
+												"isEstimate" in record &&
+													record.isEstimate &&
+													"text-success",
 											)}
-										</div>
-									);
-								})}
+										>
+											{record.value}
+										</p>
+
+										<p className="col-start-2 text-right font-mono text-xs text-muted-foreground">
+											{record.date}
+										</p>
+									</div>
+								))}
 							</div>
 						</div>
 					))}
@@ -744,36 +685,144 @@ function PrMilestonesCard() {
 	);
 }
 
+function BlockProgressionCard() {
+	const highestImprovement = Math.max(
+		...blockProgression.flatMap((block) => [
+			block.squat.percent,
+			block.bench.percent,
+			block.deadlift.percent,
+			block.total.percent,
+		]),
+	);
+
+	return (
+		<Card className="shadow-none">
+			<CardContent className="p-5 sm:p-6">
+				<div>
+					<p className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
+						Block progression
+					</p>
+
+					<h2 className="mt-2 text-base font-medium tracking-tight">
+						Completed block strength changes
+					</h2>
+				</div>
+
+				<div className="mt-6 overflow-x-auto border">
+					<table className="w-full min-w-[42rem] border-collapse text-left text-sm">
+						<thead className="border-b bg-muted/35 text-xs uppercase tracking-[0.12em] text-muted-foreground">
+							<tr>
+								<th className="px-4 py-3 font-medium">Block</th>
+								<th className="px-4 py-3 font-medium">Squat</th>
+								<th className="px-4 py-3 font-medium">Bench</th>
+								<th className="px-4 py-3 font-medium">Deadlift</th>
+								<th className="px-4 py-3 font-medium">Total</th>
+							</tr>
+						</thead>
+
+						<tbody>
+							{blockProgression.map((block) => (
+								<tr key={block.block} className="border-b last:border-b-0">
+									<td className="px-4 py-3 font-medium">{block.block}</td>
+									<BlockProgressionCell
+										change={block.squat}
+										highlight={block.squat.percent === highestImprovement}
+									/>
+									<BlockProgressionCell
+										change={block.bench}
+										highlight={block.bench.percent === highestImprovement}
+									/>
+									<BlockProgressionCell
+										change={block.deadlift}
+										highlight={block.deadlift.percent === highestImprovement}
+									/>
+									<BlockProgressionCell
+										change={block.total}
+										highlight={block.total.percent === highestImprovement}
+									/>
+								</tr>
+							))}
+						</tbody>
+					</table>
+				</div>
+			</CardContent>
+		</Card>
+	);
+}
+
+function BlockProgressionCell({
+	change,
+	highlight,
+}: {
+	change: {
+		percent: number;
+		pounds: number;
+	};
+	highlight?: boolean;
+}) {
+	return (
+		<td className={cn("px-4 py-3", highlight && "bg-brand-subtle")}>
+			<p className="font-mono text-sm font-medium text-success">
+				{formatSignedPercent(change.percent)}
+			</p>
+			<p className="mt-1 font-mono text-xs text-muted-foreground">
+				{formatSignedPounds(change.pounds)}
+			</p>
+		</td>
+	);
+}
+
 function RangeSummary({
 	label,
 	change,
+	months,
 }: {
 	label: string;
 	change: {
 		percent: number;
 		pounds: number;
 	};
+	months: number;
 }) {
+	const averagePerMonth = change.pounds / months;
+
 	return (
 		<div>
 			<p className="text-xs text-muted-foreground">{label}</p>
 			<p className="mt-1 inline-flex items-center gap-1 font-mono text-sm font-medium text-success">
 				<ArrowUpRight className="size-3.5" />
-				{change.percent.toFixed(1)}%
+				{formatSignedPounds(change.pounds)}
 			</p>
 			<p className="mt-1 font-mono text-xs text-muted-foreground">
-				{formatPoundChange(change.pounds)} lb
+				{formatSignedPercent(change.percent)}
+			</p>
+			<p className="mt-1 font-mono text-xs text-muted-foreground">
+				{formatSignedPounds(averagePerMonth, 1)}/mo
 			</p>
 		</div>
 	);
 }
 
-function formatPoundChange(value: number) {
+function formatSignedPounds(value: number, digits = 0) {
+	const formatted = value.toFixed(digits);
+
 	if (value > 0) {
-		return `+${value}`;
+		return `+${formatted} lb`;
 	}
 
-	return value.toString();
+	if (value < 0) {
+		return `${formatted} lb`;
+	}
+
+	return `${Number(formatted)} lb`;
+}
+
+function formatSignedPercent(value: number) {
+	if (value > 0) {
+		return `+${value.toFixed(1)}%`;
+	}
+
+	return `${value.toFixed(1)}%`;
 }
 
 function LegendSwatch({

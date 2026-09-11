@@ -1,6 +1,7 @@
 import { ArrowUpRight, type LucideIcon } from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 type BlockMetricCardProps = {
 	label: string;
@@ -9,6 +10,7 @@ type BlockMetricCardProps = {
 	change?: number;
 	detail?: string;
 	icon?: LucideIcon;
+	valueClassName?: string;
 };
 
 export function BlockMetricCard({
@@ -18,6 +20,7 @@ export function BlockMetricCard({
 	change,
 	detail,
 	icon: Icon,
+	valueClassName,
 }: BlockMetricCardProps) {
 	return (
 		<Card className="shadow-none">
@@ -29,7 +32,12 @@ export function BlockMetricCard({
 						</p>
 
 						<div className="mt-4 flex items-end gap-2">
-							<span className="font-mono text-2xl font-medium tracking-[-0.05em] md:text-3xl">
+							<span
+								className={cn(
+									"font-mono text-2xl font-medium tracking-[-0.05em] md:text-3xl",
+									valueClassName,
+								)}
+							>
 								{value ?? "-"}
 							</span>
 
